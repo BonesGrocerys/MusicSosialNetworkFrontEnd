@@ -98,7 +98,7 @@ const MyTracks: FC = () => {
                     <Text></Text>
                   )}
 
-                  <Text></Text>
+                  <Text>Gleb</Text>
                 </ImageBackground>
               </View>
               <View
