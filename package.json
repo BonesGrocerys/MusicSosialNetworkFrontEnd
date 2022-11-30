@@ -1,0 +1,34 @@
+{
+  "name": "musicstreamingservice",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
+  },
+  "dependencies": {
+    "@react-native-community/slider": "4.2.3",
+    "@react-navigation/bottom-tabs": "^6.3.2",
+    "@react-navigation/native": "^6.0.11",
+    "@react-navigation/native-stack": "^6.7.0",
+    "@react-navigation/stack": "^6.2.2",
+    "expo": "~46.0.13",
+    "expo-av": "^12.0.4",
+    "expo-status-bar": "~1.4.0",
+    "react": "18.0.0",
+    "react-dom": "18.0.0",
+    "react-native": "0.69.6",
+    "react-native-modalize": "^2.1.1",
+    "react-native-track-player": "^3.2.0",
+    "react-native-web": "~0.18.7"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.9",
+    "@types/react": "~18.0.14",
+    "@types/react-native": "~0.69.1",
+    "typescript": "~4.3.5"
+  },
+  "private": true
+}
