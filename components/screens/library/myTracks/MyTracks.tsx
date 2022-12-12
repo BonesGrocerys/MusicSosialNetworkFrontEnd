@@ -6,120 +6,83 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import React, { FC, useState } from "react";
-import { MusicContext, useMusic } from "../../../../providers/MusicProvider";
-import MusicPlayer from "../../musicPlayer/MusicPlayer";
-import PlayerModal from "../../musicPlayer/PlayerModal";
-import { Audio } from "expo-av";
-import { AntDesign } from "@expo/vector-icons";
+import React, { FC, useState, useRef } from "react";
+import { useMusic } from "../../../../providers/MusicProvider";
+import { Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
 import { Entypo } from "@expo/vector-icons";
+import { Modalize } from "react-native-modalize";
 
 const MyTracks: FC = () => {
-  const {
-    activeMiniPlayer,
-    setActiveMiniPlayer,
-    playSound,
-    songs,
-    NextTrack,
-    indexNow,
-    playingStatus,
-  } = useMusic();
-
-  // const [playingStatus, setPlayingStatus] = useState("nosound");
-
-  // const [sound, setSound] = useState<Audio.Sound | null>(null);
-
-  // async function playSound() {
-  //   console.log("Loading Sound");
-  //   const { sound } = await Audio.Sound.createAsync(
-  //     require("../../../../assets/Songs/Lower_world.m4a")
-  //   );
-  //   setSound(sound);
-  //   setPlayingStatus("playing");
-  //   console.log("Playing Sound");
-  //   await sound.playAsync();
-  // }
-
-  // function _syncPauseAndPlayRecording() {
-  //   if (sound != null) {
-  //     if (playingStatus === "playing") {
-  //       sound.pauseAsync();
-  //       console.log("Pausing");
-  //       setPlayingStatus("pausing");
-  //     } else {
-  //       setPlayingStatus("playing");
-  //       sound.playAsync();
-  //     }
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   return sound
-  //     ? () => {
-  //         console.log("Unloading Sound");
-  //         sound.unloadAsync();
-  //       }
-  //     : undefined;
-  // }, [sound]);
-
+  const { playSound, songs, indexNow, playingStatus } = useMusic();
+  const ModalizeTrackRef = useRef(null);
   return (
     <View style={styles.container}>
-      <Text>MyTracks</Text>
-      <View>
-        {songs.map((item, index) => (
-          <TouchableOpacity key={index} onPress={() => playSound(index)}>
-            {/* <Text
-              style={
-                indexNow === index ? { color: "blue" } : { color: "white" }
-              }
-            > */}
-
-            <View style={styles.trackContainer}>
-              <View style={{ marginLeft: 20 }}>
-                <ImageBackground
-                  source={item.atwork}
-                  style={{ width: 50, height: 50 }}
-                  imageStyle={{ borderRadius: 6 }}
+      {songs.map((item, index) => (
+        <View style={styles.trackView}>
+          <View>
+            <TouchableOpacity key={index} onPress={() => playSound(index)}>
+              {/* style={styles.trackContainer} */}
+              <View style={{ flexDirection: "row" }}>
+                <View style={{ marginLeft: 20 }}>
+                  <ImageBackground
+                    source={item.atwork}
+                    style={{ width: 50, height: 50 }}
+                    imageStyle={{ borderRadius: 6 }}
+                  >
+                    {indexNow === index && playingStatus === "playing" ? (
+                      <Image
+                        source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                        style={{
+                          width: 30,
+                          height: 30,
+                          borderRadius: 5,
+                          marginLeft: 10,
+                          marginTop: 10,
+                        }}
+                      />
+                    ) : (
+                      <Text></Text>
+                    )}
+                  </ImageBackground>
+                </View>
+                <View
+                  style={{
+                    // alignItems: "center",
+                    marginTop: 4,
+                    marginLeft: 60,
+                  }}
                 >
-                  {indexNow === index && playingStatus === "playing" ? (
-                    <Image
-                      source={require("../../../../assets/Equalizer/gif-animation.gif")}
-                      style={{
-                        width: 30,
-                        height: 30,
-                        borderRadius: 5,
-                        marginLeft: 10,
-                        marginTop: 10,
-                      }}
-                    />
-                  ) : (
-                    <Text></Text>
-                  )}
-
-                  <Text>Gleb</Text>
-                </ImageBackground>
+                  <Text style={{ color: "white" }}>{item.title}</Text>
+                  <Text style={{ color: "grey" }}>{item.artist}</Text>
+                </View>
               </View>
-              <View
-                style={{ alignItems: "center", marginTop: 4, marginRight: 15 }}
+            </TouchableOpacity>
+          </View>
+          <View style={{ marginTop: 14, marginRight: 10 }}>
+            <TouchableOpacity onPress={() => ModalizeTrackRef.current?.open()}>
+              <Entypo name="dots-three-horizontal" size={24} color="white" />
+              <Text style={{ color: "white" }}>{item.id} </Text>
+            </TouchableOpacity>
+          </View>
+          <Modalize snapPoint={50} ref={ModalizeTrackRef}>
+            <View style={styles.container}>
+              <TouchableOpacity
+                style={{ flexDirection: "row", alignItems: "center" }}
               >
-                <Text style={{ color: "white" }}>{item.title}</Text>
-                <Text style={{ color: "white" }}>{item.artist}</Text>
-              </View>
-              <View style={{ marginRight: 20, marginTop: 12 }}>
-                <Entypo name="dots-three-horizontal" size={20} color="white" />
-              </View>
+                <View style={{ width: "15%", marginLeft: 10 }}>
+                  <Ionicons name="trash-outline" size={40} color="red" />
+                  <Text style={{ color: "white" }}>{index} </Text>
+                </View>
+                <Text style={{ color: "white", fontSize: 20 }}>
+                  Удалить аудиозапись
+                </Text>
+              </TouchableOpacity>
             </View>
-
-            {/* </Text> */}
-          </TouchableOpacity>
-        ))}
-        {/* <Image
-          source={require("../../../../assets/Equalizer/oie_291440432hibyr30.gif")}
-          style={{ width: 45, height: 45, borderRadius: 5 }}
-        /> */}
-      </View>
+          </Modalize>
+        </View>
+      ))}
     </View>
   );
 };
@@ -136,9 +99,16 @@ const styles = StyleSheet.create({
   trackContainer: {
     height: 50,
     width: Dimensions.get("window").width,
-    justifyContent: "space-between",
+    // justifyContent: "space-between",
     // display: "flex",
     flexDirection: "row",
+    marginTop: 10,
+  },
+  trackView: {
+    width: Dimensions.get("window").width,
+    height: 50,
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginTop: 10,
   },
 });
