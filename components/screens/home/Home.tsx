@@ -16,11 +16,11 @@ const Home: FC = () => {
     playSound,
     songs,
     NextTrack,
-    album,
+    albums,
   } = useMusic();
   return (
     <View style={styles.container}>
-      {album.map((item, index) => (
+      {albums?.map((item, index) => (
         <View>
           <TouchableOpacity key={index} onPress={() => playSound(index)}>
             <Text style={{ color: "white" }}>{item.title}</Text>

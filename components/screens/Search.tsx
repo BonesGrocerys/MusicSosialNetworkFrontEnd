@@ -1,24 +1,35 @@
-import { View, Text, Image, StyleSheet, ScrollView } from "react-native";
-import React, { FC } from "react";
+import { View, Text, Image, StyleSheet, ScrollView, Dimensions } from "react-native";
+import React, { FC, useEffect } from "react";
 import { useMusic } from "../../providers/MusicProvider";
-import Album from "../Album";
+import Albums from "../Albums";
 
 const Search: FC = () => {
-  const { songs } = useMusic();
+  const statuses = ["Новинки", "Редакция"]
+  const { albums, getTracks } = useMusic();
+  const test = [1, 2, 3]
+  useEffect(() => {
+    console.log("TESTTEST");
+    
+    const p = getTracks();
+  }, [])
   return (
     <View>
-      <ScrollView>
-        <Album />
+      <ScrollView style={{ height: "100%"}}>
+        {statuses?.map(status => <View>
+         <Text>{status}</Text>
+          <Albums albums={albums.filter(album => album.status ===  status)}/>
+        </View>)}
+
       </ScrollView>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  album: {
-    width: 100,
-    height: 100,
+  mainContainer: {
+    
   },
+
 });
 
 export default Search;

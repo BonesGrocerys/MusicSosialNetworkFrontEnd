@@ -14,12 +14,14 @@ import React, {
 } from "react";
 import { ITrack } from "../Interfaces/Tracks";
 import { IAlbum } from "../Interfaces/Album";
-import { Modalize } from "react-native-modalize";
+import axios from "axios";
+import { API_URL } from "./api";
+import { IOperationResult } from "../Interfaces/OperationResult";
 interface IContext {
   activeMiniPlayer: boolean;
   setActiveMiniPlayer: Dispatch<SetStateAction<boolean>>;
   songs: ITrack[];
-  album: IAlbum[];
+  albums: IAlbum[];
   sound: any;
   setSound: any;
   playSound: any;
@@ -53,6 +55,7 @@ interface IContext {
   setPlaybackPositionNow: any;
   isLooping: boolean;
   setIsLooping: Dispatch<SetStateAction<boolean>>;
+  getTracks: () => void;
 }
 
 type Props = { children: ReactNode };
@@ -254,6 +257,78 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     }
   };
 
+const albums: IAlbum[] = [
+  {
+    artist: "Shacys",
+    atwork: "test",
+    title: "testtimtle",
+    id: 1,
+    status: "Новинки",
+    url: "url"
+  },
+  {
+    artist: "Shacys",
+    atwork: "test",
+    title: "testtimtle",
+    id: 2,
+    status: "Новинки",
+    url: "url"
+  },
+  {
+    artist: "Shacys",
+    atwork: "test",
+    title: "testtimtle",
+    id: 3,
+    status: "Редакция",
+    url: "url"
+  },
+  {
+    artist: "Shacys",
+    atwork: "test",
+    title: "testtimtle",
+    id: 4,
+    status: "Редакция",
+    url: "url"
+  },
+  {
+    artist: "Shacys",
+    atwork: "test",
+    title: "testtimtle",
+    id: 5,
+    status: "Новинки",
+    url: "url"
+  }
+]
+
+const [test, setTest] = useState<any>();
+
+const getTracks = async () => {
+  try {
+    console.log("НАЧАЛО МЕТОДА");
+
+    const { data } = await axios.get<IOperationResult<ITrack[]>>(
+      `${API_URL}/Tracks/get-tracks`
+    ).then(x => {
+      console.log(x);
+      return x;
+    }
+    );
+    setTest(data)
+    console.log(data);
+    
+    }
+    catch(e){
+      console.log('ОШИБКА');
+      console.log(e);
+      
+      
+    }
+    finally{
+
+    }
+};
+
+
   const songs: ITrack[] = [
     {
       title: "21:10",
@@ -285,16 +360,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     },
   ];
 
-  const album: IAlbum[] = [
-    {
-      title: "3-ETERNAL",
-      artist: "KUTE",
-      atwork: require("../assets/image/NEMESIS_FINAL_2.jpg"),
-      url: "https://www.mboxdrive.com/45.mp3",
-      id: 3,
-    },
-  ];
-
   const value = useMemo(
     () => ({
       activeMiniPlayer,
@@ -320,7 +385,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       itemNow,
       setItemNow,
       PreviousTrack,
-      album,
       fullDuration,
       setFullDuration,
       convertTime,
@@ -332,6 +396,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setPlaybackPositionNow,
       isLooping,
       setIsLooping,
+      albums,
+      getTracks
     }),
     [
       activeMiniPlayer,
@@ -357,7 +423,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       itemNow,
       setItemNow,
       PreviousTrack,
-      album,
       fullDuration,
       setFullDuration,
       convertTime,
@@ -370,10 +435,13 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setPlaybackPositionNow,
       isLooping,
       setIsLooping,
+      albums,
+      getTracks
     ]
   );
   return (
     <MusicContext.Provider
+    // value={value}
       value={{
         activeMiniPlayer,
         setActiveMiniPlayer,
@@ -398,7 +466,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         itemNow,
         setItemNow,
         PreviousTrack,
-        album,
         fullDuration,
         setFullDuration,
         convertTime,
@@ -410,6 +477,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         setPlaybackPositionNow,
         isLooping,
         setIsLooping,
+        albums,
+        getTracks
       }}
     >
       {children}

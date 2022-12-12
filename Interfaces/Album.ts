@@ -3,5 +3,6 @@ export interface IAlbum {
   artist: string;
   atwork: string;
   url: string;
+  status: "Новинки" | "Редакция";
   id: number;
 }
