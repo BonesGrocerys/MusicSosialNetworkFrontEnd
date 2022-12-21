@@ -22,6 +22,7 @@
     "react-dom": "18.0.0",
     "react-native": "0.69.6",
     "react-native-modalize": "^2.1.1",
+    "react-native-multi-slider": "^0.3.6",
     "react-native-track-player": "^3.2.0",
     "react-native-web": "~0.18.7"
   },
@@ -29,6 +30,7 @@
     "@babel/core": "^7.12.9",
     "@types/react": "~18.0.14",
     "@types/react-native": "~0.69.1",
+    "@types/react-native-multi-slider": "^0.3.2",
     "typescript": "~4.3.5"
   },
   "private": true

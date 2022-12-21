@@ -1,6 +1,6 @@
 export interface ITrack {
   title: string;
-  artist: string;
+  author: string;
   atwork: string;
   url: string;
   id: number;

@@ -8,7 +8,10 @@ import Slider from "@react-native-community/slider";
 import { useMusic } from "../../../providers/MusicProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
+import MultiSlider from "react-native-multi-slider";
 import { Audio } from "expo-av";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
+
 const MusicPlayer: FC = () => {
   const [currentPosition, setCurrentPosition] = useState<number>(0);
 
@@ -35,21 +38,12 @@ const MusicPlayer: FC = () => {
     setFullDuration,
     isLooping,
     setIsLooping,
+    calculateSeekBar,
   } = useMusic();
 
-  // console.log(trackPlayNow);
-  // console.log(indexNow + 1);
-  // console.log(songsNow);
-
-  // console.log(indexNow);
-
-  // async function ResumeAudio() {
-  //   setPlayingStatus("playing");
-  //   await sound?.PlayAsync();
-  // }
-  // console.log(indexNow, "в MusicPlayer");
-  // console.log(trackIndexNow);
   console.log(isLooping);
+
+  // const [activeIcon, setActiveIcon] = useState<boolean>(false);
 
   // useEffect(() => {
   //   if (fullDuration - 100 < playbackPositionNow) {
@@ -77,10 +71,9 @@ const MusicPlayer: FC = () => {
         style={{ width: "100%", height: 40 }}
         minimumValue={0}
         maximumValue={1}
-        // value={calculateSeekBar()}
         value={duration}
-        minimumTrackTintColor="#FFFFFF"
-        maximumTrackTintColor="#000000"
+        // minimumTrackTintColor="#FFFFFF"
+        // maximumTrackTintColor="#000000"
         onValueChange={(duration) =>
           setCurrentPosition(convertTime((duration * fullDuration) / 1000))
         }
@@ -91,7 +84,7 @@ const MusicPlayer: FC = () => {
         }}
       />
       <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
-      <Text style={{ color: "white" }}>{songsNow[indexNow].artist}</Text>
+      <Text style={{ color: "grey" }}>{songsNow[indexNow].author}</Text>
       <View style={styles.playPause}>
         <TouchableOpacity onPressIn={() => PreviousTrack()}>
           <AntDesign name="caretleft" size={40} color="white" />
@@ -112,11 +105,33 @@ const MusicPlayer: FC = () => {
         </TouchableOpacity>
       </View>
       <View>
-        <TouchableOpacity onPress={() => setIsLooping(!isLooping)}>
-          <View>
-            <Ionicons name="repeat" size={40} color={"white"} />
-          </View>
-        </TouchableOpacity>
+        {isLooping === false ? (
+          <TouchableOpacity
+            onPress={() => {
+              sound.setStatusAsync({ isLooping: true });
+              setIsLooping(!isLooping);
+            }}
+          >
+            <View>
+              <MaterialCommunityIcons
+                name="repeat-off"
+                size={40}
+                color="white"
+              />
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            onPress={() => {
+              sound.setStatusAsync({ isLooping: false });
+              setIsLooping(!isLooping);
+            }}
+          >
+            <View>
+              <MaterialCommunityIcons name="repeat" size={40} color="white" />
+            </View>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );

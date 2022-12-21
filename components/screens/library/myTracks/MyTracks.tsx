@@ -6,32 +6,67 @@ import {
   Pressable,
   TouchableOpacity,
 } from "react-native";
-import React, { FC, useState, useRef } from "react";
+import React, { FC, useState, useRef, useEffect } from "react";
 import { useMusic } from "../../../../providers/MusicProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { Image } from "react-native";
 import { ImageBackground } from "react-native";
 import { Entypo } from "@expo/vector-icons";
 import { Modalize } from "react-native-modalize";
+import axios from "axios";
+import { API_URL } from "../../../../providers/api";
+import { IOperationResult } from "../../../../Interfaces/OperationResult";
+import { ITrack } from "../../../../Interfaces/Tracks";
 
 const MyTracks: FC = () => {
-  const { playSound, songs, indexNow, playingStatus } = useMusic();
+  const { playSound, songsNow, indexNow, playingStatus, key } = useMusic();
   const ModalizeTrackRef = useRef(null);
+
+  const [tracks, setTracks] = useState<ITrack[]>();
+
+  const getAllTracks = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios
+        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`)
+        .then((x) => {
+          console.log(x);
+          return x;
+        });
+      setTracks(data.result);
+      console.log(data);
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  useEffect(() => {
+    getAllTracks();
+  }, []);
+
   return (
     <View style={styles.container}>
-      {songs.map((item, index) => (
+      {tracks?.map((item, index) => (
         <View style={styles.trackView}>
           <View>
-            <TouchableOpacity key={index} onPress={() => playSound(index)}>
+            <TouchableOpacity
+              key={index}
+              onPress={() => playSound(tracks, index)}
+            >
               {/* style={styles.trackContainer} */}
               <View style={{ flexDirection: "row" }}>
                 <View style={{ marginLeft: 20 }}>
                   <ImageBackground
-                    source={item.atwork}
+                    source={require("../../../../assets/image/eternal_doom_final.jpg")}
                     style={{ width: 50, height: 50 }}
                     imageStyle={{ borderRadius: 6 }}
                   >
-                    {indexNow === index && playingStatus === "playing" ? (
+                    {/* indexNow === index */}
+                    {key === tracks[index].url &&
+                    playingStatus === "playing" ? (
                       <Image
                         source={require("../../../../assets/Equalizer/gif-animation.gif")}
                         style={{
@@ -55,7 +90,7 @@ const MyTracks: FC = () => {
                   }}
                 >
                   <Text style={{ color: "white" }}>{item.title}</Text>
-                  <Text style={{ color: "grey" }}>{item.artist}</Text>
+                  <Text style={{ color: "grey" }}>{item.author}</Text>
                 </View>
               </View>
             </TouchableOpacity>

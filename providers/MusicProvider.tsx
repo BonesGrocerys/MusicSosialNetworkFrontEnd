@@ -22,6 +22,7 @@ interface IContext {
   setActiveMiniPlayer: Dispatch<SetStateAction<boolean>>;
   songs: ITrack[];
   albums: IAlbum[];
+
   sound: any;
   setSound: any;
   playSound: any;
@@ -56,6 +57,13 @@ interface IContext {
   isLooping: boolean;
   setIsLooping: Dispatch<SetStateAction<boolean>>;
   getTracks: () => void;
+  getAllTracks: () => void;
+  tracks: ITrack[] | undefined;
+  calculateSeekBar: any;
+  setDuration: any;
+  getAllTracksHome: () => void;
+  tracksHome: ITrack[] | undefined;
+  key: string;
 }
 
 type Props = { children: ReactNode };
@@ -97,11 +105,20 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setDuration(playbackPosition / playbackDuration);
       setFullDuration(playbackDuration);
       setPlaybackPositionNow(playbackPosition);
-      setTrackIndexNow(playbackStatus);
-      console.log(playbackStatus.didJustFinish);
-      const status = playbackStatus.positionMillis;
+      setTrackIndexNow(playbackStatus.playableDurationMillis);
+      console.log(playbackStatus);
 
-      console.log(status, " -status");
+      // console.log(playbackStatus);
+
+      // if (playbackStatus.didJustFinish === true) {
+      //   await NextTrack();
+      // }
+
+      // console.log(playbackStatus.didJustFinish);
+      // const status = playbackStatus.positionMillis;
+
+      // console.log(status, " -status");
+      // console.log(duration);
 
       // console.log(playbackStatus);
       // console.log(playbackDuration);
@@ -112,8 +129,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       // console.log(indexNow);
 
       // console.log(itemNow);
-      // if (playbackStatus.didJustFinish === true) {
-      //   await NextTrack();
+
       // if (isLooping === true) {
       //   if (fullDuration - 100 < playbackPositionNow) {
       //     setFullDuration(101);
@@ -127,23 +143,33 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     return convertTime(playbackPositionNow / 1000);
   };
 
-  async function playSound(index: number) {
-    if (songs[index].url !== key) {
-      setDuration(0);
-      setPlaybackPositionNow(0);
+  const [currentPlaylist, setCurrentPlaylist] = useState<ITrack[]>();
+
+  async function playSound(item: any, index: any) {
+    setCurrentPlaylist(item);
+    console.log(currentPlaylist);
+
+    if (item === undefined) return 0;
+    if (item[index].url !== key) {
+      // setFullDuration(0);
+      // setDuration(0);
+      // setPlaybackPositionNow(0);
+
       console.log(index, "-index");
-      setSongsNow(songs);
+      setSongsNow(item);
       setIndexNow(index);
       console.log(indexNow, "-indexNow");
-      setKey(songs[index].url);
+      setKey(item[index].url);
       setActiveMiniPlayer(true);
       console.log("Loading Sound");
       await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-      // // const { sound } = await Audio.Sound.createAsync(
-      const sound = new Audio.Sound();
-      const url = songs[index].url;
-      console.log(songs[index].url);
-      await sound.loadAsync({ uri: url }, { shouldPlay: true });
+      const url = item[index].url;
+      const { sound } = await Audio.Sound.createAsync(
+        { uri: url },
+        { shouldPlay: false, progressUpdateIntervalMillis: 500 }
+      );
+      console.log(item[index].url);
+      await sound.playFromPositionAsync(0);
       setSound(sound);
       setPlayingStatus("playing");
       console.log("Playing Sound");
@@ -161,10 +187,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     //   await playSound(songsNow, itemNow, indexNow + 1);
     // } else {
     // setIndexNow(0);
+    await setDuration(0);
     setPlaybackPositionNow(0);
     setSound(null);
     setKey(-1);
-    await playSound(indexNow + 1);
+    await playSound(songsNow, indexNow + 1);
     // await playSound(songsNow, itemNow, indexNow + 1);
     // }
 
@@ -182,21 +209,22 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     setPlaybackPositionNow(0);
     setSound(null);
     setKey(-1);
-    await playSound(indexNow);
+    await playSound(indexNow, songsNow);
     // await playSound(songsNow, itemNow, indexNow + 1);
     // }
 
     // console.log(indexNow, "NextTrack");
   }
 
-  const PreviousTrack = () => {
+  const PreviousTrack = async () => {
     if (playbackPositionNow > 5000) {
-      sound?.setPositionAsync(0);
+      await sound?.setPositionAsync(1);
     } else {
+      await setDuration(0);
       setPlaybackPositionNow(0);
       setSound(null);
       setKey(-1);
-      playSound(indexNow - 1);
+      playSound(songsNow, indexNow - 1);
     }
   };
 
@@ -257,103 +285,147 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     }
   };
 
-const albums: IAlbum[] = [
-  {
-    artist: "Shacys",
-    atwork: "test",
-    title: "testtimtle",
-    id: 1,
-    status: "Новинки",
-    url: "url"
-  },
-  {
-    artist: "Shacys",
-    atwork: "test",
-    title: "testtimtle",
-    id: 2,
-    status: "Новинки",
-    url: "url"
-  },
-  {
-    artist: "Shacys",
-    atwork: "test",
-    title: "testtimtle",
-    id: 3,
-    status: "Редакция",
-    url: "url"
-  },
-  {
-    artist: "Shacys",
-    atwork: "test",
-    title: "testtimtle",
-    id: 4,
-    status: "Редакция",
-    url: "url"
-  },
-  {
-    artist: "Shacys",
-    atwork: "test",
-    title: "testtimtle",
-    id: 5,
-    status: "Новинки",
-    url: "url"
-  }
-]
+  const albums: IAlbum[] = [
+    {
+      artist: "Shacys",
+      atwork: "test",
+      title: "testtimtle",
+      id: 1,
+      status: "Новинки",
+      url: "url",
+    },
+    {
+      artist: "Shacys",
+      atwork: "test",
+      title: "testtimtle",
+      id: 2,
+      status: "Новинки",
+      url: "url",
+    },
+    {
+      artist: "Shacys",
+      atwork: "test",
+      title: "testtimtle",
+      id: 3,
+      status: "Редакция",
+      url: "url",
+    },
+    {
+      artist: "Shacys",
+      atwork: "test",
+      title: "testtimtle",
+      id: 4,
+      status: "Редакция",
+      url: "url",
+    },
+    {
+      artist: "Shacys",
+      atwork: "test",
+      title: "testtimtle",
+      id: 5,
+      status: "Новинки",
+      url: "url",
+    },
+  ];
 
-const [test, setTest] = useState<any>();
+  ///////////////////////////////////////////////
+  // Запрос всех треков
+  ///////////////////////////////////////////////
 
-const getTracks = async () => {
-  try {
-    console.log("НАЧАЛО МЕТОДА");
+  // const [tracks, setTracks] = useState<ITrack[]>();
 
-    const { data } = await axios.get<IOperationResult<ITrack[]>>(
-      `${API_URL}/Tracks/get-tracks`
-    ).then(x => {
-      console.log(x);
-      return x;
-    }
-    );
-    setTest(data)
-    console.log(data);
-    
-    }
-    catch(e){
-      console.log('ОШИБКА');
+  // const getAllTracks = async () => {
+  //   try {
+  //     console.log("НАЧАЛО МЕТОДА");
+
+  //     const { data } = await axios
+  //       .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`)
+  //       .then((x) => {
+  //         console.log(x);
+  //         return x;
+  //       });
+  //     setTracks(data.result);
+  //     console.log(data);
+  //   } catch (e) {
+  //     console.log("ОШИБКА");
+  //     console.log(e);
+  //   } finally {
+  //   }
+  // };
+
+  ///////////////////////////////////////////////
+  // Запрос моих треков для Home
+  ///////////////////////////////////////////////
+  const [tracksHome, setTracksHome] = useState<any>();
+
+  // const getAllTracksHome = async () => {
+  //   try {
+  //     console.log("НАЧАЛО МЕТОДА");
+
+  //     const { data } = await axios
+  //       .get<IOperationResult<ITrack[]>>(
+  //         `${API_URL}/Tracks/get-all-added-tracks-person/1`
+  //       )
+  //       .then((x) => {
+  //         console.log(x);
+  //         return x;
+  //       });
+  //     setTracks(data.result);
+  //     console.log(data);
+  //   } catch (e) {
+  //     console.log("ОШИБКА");
+  //     console.log(e);
+  //   } finally {
+  //   }
+  // };
+
+  const [test, setTest] = useState<any>();
+  const getTracks = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios
+
+        .get<any>(`${API_URL}/Tracks/get-track-file/2.mp3`)
+
+        .then((x) => {
+          console.log(x);
+          return x;
+        });
+      setTest(data);
+      console.log(data);
+    } catch (e) {
+      console.log("ОШИБКА");
       console.log(e);
-      
-      
+    } finally {
     }
-    finally{
-
-    }
-};
-
+  };
 
   const songs: ITrack[] = [
     {
       title: "21:10",
-      artist: "SHPACKYOU$",
+      author: "SHPACKYOU$",
       atwork: require("../assets/image/eternal_doom_final.jpg"),
-      url: "https://www.mboxdrive.com/62.mp3",
+      url: "http://192.168.0.105:5205/api/Tracks/get-track-file/4.mp3",
       id: 1,
     },
     {
       title: "21:12",
-      artist: "123213$",
+      author: "123213$",
       atwork: require("../assets/image/Anemone.jpg"),
       url: "https://www.mboxdrive.com/72.mp3",
       id: 2,
     },
     {
       title: "Lower World",
-      artist: "SECAMMORY",
+      author: "SECAMMORY",
       atwork: require("../assets/image/LOWER_WORLD.jpg"),
       url: "https://www.mboxdrive.com/57.mp3",
       id: 3,
     },
     {
       title: "NEMESIS",
-      artist: "SHPACKYOU$",
+      author: "SHPACKYOU$",
       atwork: require("../assets/image/NEMESIS_FINAL_2.jpg"),
       url: "https://www.mboxdrive.com/82p.mp3",
       id: 4,
@@ -397,7 +469,14 @@ const getTracks = async () => {
       isLooping,
       setIsLooping,
       albums,
-      getTracks
+      getTracks,
+      // getAllTracks,
+      // tracks,
+      calculateSeekBar,
+      setDuration,
+      // getAllTracksHome,
+      tracksHome,
+      key,
     }),
     [
       activeMiniPlayer,
@@ -436,12 +515,19 @@ const getTracks = async () => {
       isLooping,
       setIsLooping,
       albums,
-      getTracks
+      getTracks,
+      // getAllTracks,
+      // tracks,
+      calculateSeekBar,
+      setDuration,
+      // getAllTracksHome,
+      tracksHome,
+      key,
     ]
   );
   return (
     <MusicContext.Provider
-    // value={value}
+      // value={value}
       value={{
         activeMiniPlayer,
         setActiveMiniPlayer,
@@ -478,7 +564,14 @@ const getTracks = async () => {
         isLooping,
         setIsLooping,
         albums,
-        getTracks
+        getTracks,
+        // getAllTracks,
+        // tracks,
+        calculateSeekBar,
+        setDuration,
+        // getAllTracksHome,
+        tracksHome,
+        key,
       }}
     >
       {children}

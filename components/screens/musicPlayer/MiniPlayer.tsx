@@ -33,98 +33,32 @@ const MiniPlayer: FC = () => {
     trackIndexNow,
     isLooping,
     indexNow,
-
+    tracks,
     setSound,
+    setDuration,
+    songsNow,
   } = useMusic();
 
-  // const [playingStatus, setPlayingStatus] = useState("nosound");
-  // const [sound, setSound] = useState<Audio.Sound | null>(null);
-  // const [duration, setDuration] = useState<any>();
-
-  // const calculateSeekBar = (
-  //   playbackPosition: number,
-  //   playbackDuration: number
-  // ) => {
-  //   if (playbackPosition !== null && playbackDuration !== null) {
-  //     return playbackPosition / playbackDuration;
-  //   }
-  //   return 0;
-  // };
-
-  // function OnPlaybackStatusUpdate(playbackStatus: any) {
-  //   if (playbackStatus.isLoaded && playbackStatus.isPlaying) {
-  //     const playbackPosition = playbackStatus.positionMillis;
-  //     const playbackDuration = playbackStatus.durationMillis;
-  //     setDuration(playbackPosition / playbackDuration);
-  //     console.log(playbackPosition);
-  //     console.log(playbackDuration);
-  //   }
-  // }
-
-  // async function playSound() {
-  //   if (playingStatus == "nosound") {
-  //     console.log("Loading Sound");
-  //     await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
-  //     const { sound } = await Audio.Sound.createAsync(
-  //       // require("../../../assets/Songs/Lower_world.m4a")
-  //       { uri: songs[1].url }
-  //     );
-
-  //     setSound(sound);
-  //     setPlayingStatus("playing");
-  //     console.log("Playing Sound");
-  //     await sound.playAsync();
-  //     // await sound.setProgressUpdateIntervalAsync(
-  //     //   _DEFAULT_PROGRESS_UPDATE_INTERVAL_MILLIS
-  //     // );
-  //     return sound.setOnPlaybackStatusUpdate(OnPlaybackStatusUpdate);
-  //   } else {
-  //     if (sound != null) {
-  //       if (playingStatus === "playing") {
-  //         sound.pauseAsync();
-  //         console.log("Pausing");
-  //         setPlayingStatus("pausing");
-  //       } else {
-  //         setPlayingStatus("playing");
-  //         sound.playAsync();
-  //         // sound.set;
-  //       }
-  //     }
-  //   }
-  // }
-
-  // function _syncPauseAndPlayRecording() {
-  //   if (sound != null) {
-  //     if (playingStatus === "playing") {
-  //       sound.pauseAsync();
-  //       console.log("Pausing");
-  //       setPlayingStatus("pausing");
-  //     } else {
-  //       setPlayingStatus("playing");
-  //       sound.playAsync();
-  //     }
-  //   }
-  // }
-
   useEffect(() => {
-    // console.log("useEffect");
-
+    console.log("useEffect");
     if (fullDuration - 100 < playbackPositionNow && isLooping === false) {
       setFullDuration(101);
-      setPlaybackPositionNow(null);
+      // setDuration(0);
+      setPlaybackPositionNow(0);
+      // setSound(null);
       NextTrack();
-    } else if (fullDuration - 200 < playbackPositionNow && isLooping === true) {
-      sound.setPositionAsync(0);
-      // PlayPause();
-      sound.playAsync();
     }
   });
 
   useEffect(() => {
     return sound
       ? () => {
-          console.log("Unloading Sound");
-          sound.unloadAsync();
+          if (isLooping === true) {
+            console.log("Лупинг тру");
+          } else {
+            console.log("Unloading Sound");
+            sound.unloadAsync();
+          }
         }
       : undefined;
   }, [sound]);
@@ -144,8 +78,8 @@ const MiniPlayer: FC = () => {
 
         <TouchableOpacity onPress={() => ModalizeRef.current?.open()}>
           <View>
-            <Text style={{ color: "white" }}>{songs[indexNow].title}</Text>
-            <Text style={{ color: "white" }}>{songs[indexNow].artist}</Text>
+            <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
+            <Text style={{ color: "grey" }}>{songsNow[indexNow].author}</Text>
           </View>
         </TouchableOpacity>
 
