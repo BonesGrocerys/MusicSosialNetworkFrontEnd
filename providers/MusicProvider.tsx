@@ -148,7 +148,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   async function playSound(item: any, index: any) {
     setCurrentPlaylist(item);
     console.log(currentPlaylist);
-
+    setIsLooping(false);
     if (item === undefined) return 0;
     if (item[index].url !== key) {
       // setFullDuration(0);
@@ -187,6 +187,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     //   await playSound(songsNow, itemNow, indexNow + 1);
     // } else {
     // setIndexNow(0);
+    setIsLooping(false);
     await setDuration(0);
     setPlaybackPositionNow(0);
     setSound(null);
@@ -220,6 +221,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     if (playbackPositionNow > 5000) {
       await sound?.setPositionAsync(1);
     } else {
+      setIsLooping(false);
       await setDuration(0);
       setPlaybackPositionNow(0);
       setSound(null);

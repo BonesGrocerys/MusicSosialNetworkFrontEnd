@@ -11,6 +11,7 @@ import { AntDesign } from "@expo/vector-icons";
 import MultiSlider from "react-native-multi-slider";
 import { Audio } from "expo-av";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { ImageBackground } from "react-native";
 
 const MusicPlayer: FC = () => {
   const [currentPosition, setCurrentPosition] = useState<number>(0);
@@ -39,6 +40,7 @@ const MusicPlayer: FC = () => {
     isLooping,
     setIsLooping,
     calculateSeekBar,
+    songs,
   } = useMusic();
 
   console.log(isLooping);
@@ -54,13 +56,18 @@ const MusicPlayer: FC = () => {
   // });
   return (
     <View style={styles.container}>
-      <Image
-        style={{ width: 320, height: 320 }}
-        source={songsNow[indexNow].atwork}
-      />
+      <View>
+        <Image
+          style={{ width: 320, height: 320, marginTop: 15 }}
+          source={songs[3].atwork}
+        />
+      </View>
+
       <View style={styles.time}>
         <Text style={{ color: "white" }}>
-          {playingStatus === "pausing" ? currentPosition : RenderCurrentTime()}
+          {playingStatus === "pausing"
+            ? RenderCurrentTime()
+            : RenderCurrentTime()}
         </Text>
         <Text style={{ color: "white" }}>
           {convertTime(fullDuration / 1000)}
