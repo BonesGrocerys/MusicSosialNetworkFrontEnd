@@ -17,24 +17,31 @@ import axios from "axios";
 import { API_URL } from "../../../../providers/api";
 import { IOperationResult } from "../../../../Interfaces/OperationResult";
 import { ITrack } from "../../../../Interfaces/Tracks";
+import { useAuth } from "../../../../providers/AuthProvider";
 
 const MyTracks: FC = () => {
   const { playSound, songsNow, indexNow, playingStatus, key } = useMusic();
   const ModalizeTrackRef = useRef(null);
-
+  const { user, getToken, token } = useAuth();
   const [tracks, setTracks] = useState<ITrack[]>();
 
   const getAllTracks = async () => {
     try {
       console.log("НАЧАЛО МЕТОДА");
 
-      const { data } = await axios
-        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`)
-        .then((x) => {
-          console.log(x);
-          return x;
-        });
-      setTracks(data.result);
+      const { data } = await axios.get<IOperationResult<ITrack[]>>(
+        `${API_URL}/Tracks/get-all-added-tracks-person/${user?.id}`,
+        {
+          headers: {
+            Authorization: `bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        setTracks(data.result);
+        return true;
+      }
       console.log(data);
     } catch (e) {
       console.log("ОШИБКА");
@@ -98,17 +105,17 @@ const MyTracks: FC = () => {
           <View style={{ marginTop: 14, marginRight: 10 }}>
             <TouchableOpacity onPress={() => ModalizeTrackRef.current?.open()}>
               <Entypo name="dots-three-horizontal" size={24} color="white" />
-              <Text style={{ color: "white" }}>{item.id} </Text>
+              {/* <Text style={{ color: "white" }}>{item.id} </Text> */}
             </TouchableOpacity>
           </View>
-          <Modalize snapPoint={50} ref={ModalizeTrackRef}>
+          <Modalize snapPoint={20} ref={ModalizeTrackRef}>
             <View style={styles.container}>
               <TouchableOpacity
                 style={{ flexDirection: "row", alignItems: "center" }}
               >
                 <View style={{ width: "15%", marginLeft: 10 }}>
                   <Ionicons name="trash-outline" size={40} color="red" />
-                  <Text style={{ color: "white" }}>{index} </Text>
+                  <Text style={{ color: "white" }}>{item.id} </Text>
                 </View>
                 <Text style={{ color: "white", fontSize: 20 }}>
                   Удалить аудиозапись

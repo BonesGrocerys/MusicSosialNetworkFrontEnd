@@ -3,4 +3,5 @@ export type TypeRootStackParamList = {
   Search: undefined;
   Library: undefined;
   MyTracks: undefined;
+  Auth: undefined;
 };

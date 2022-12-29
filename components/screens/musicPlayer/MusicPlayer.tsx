@@ -12,39 +12,65 @@ import MultiSlider from "react-native-multi-slider";
 import { Audio } from "expo-av";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
+import { useAuth } from "../../../providers/AuthProvider";
+import { IOperationResult } from "../../../Interfaces/OperationResult";
+import { API_URL } from "../../../providers/api";
+import axios from "axios";
 
 const MusicPlayer: FC = () => {
   const [currentPosition, setCurrentPosition] = useState<number>(0);
-
+  const { user, logout, getToken, token } = useAuth();
   const {
     duration,
     playingStatus,
     PlayPause,
     NextTrack,
-    trackPlayNow,
     PreviousTrack,
     songsNow,
     indexNow,
-    itemNow,
     sound,
     fullDuration,
     convertTime,
     RenderCurrentTime,
-    setPlayingStatus,
-    playbackPositionNow,
-    trackIndexNow,
-    setTrackIndexNow,
-    OnPlaybackStatusUpdate,
-    setPlaybackPositionNow,
-    setFullDuration,
     isLooping,
     setIsLooping,
-    calculateSeekBar,
     songs,
   } = useMusic();
 
   console.log(isLooping);
 
+  const AddTrackToPerson = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios
+        .get(
+          `${API_URL}/Tracks/add-track-to-peson?personId=${user?.id}&trackId=${songsNow[indexNow].id}`,
+          {
+            headers: {
+              Authorization: `Bearer  ${token}`,
+            },
+          }
+        )
+        .then((x) => {
+          console.log(x);
+          return x;
+        });
+      console.log("Успешно");
+      alert("Трек добавлен");
+      console.log(data);
+      // console.log(token);
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+      // console.log(`Bearer ${token}`);
+    } finally {
+    }
+  };
+
+  // useEffect(() => {
+  //   AddTrackToPerson();
+  // }, []);
   // const [activeIcon, setActiveIcon] = useState<boolean>(false);
 
   // useEffect(() => {
@@ -91,7 +117,7 @@ const MusicPlayer: FC = () => {
         }}
       />
       <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
-      <Text style={{ color: "grey" }}>{songsNow[indexNow].author}</Text>
+      <Text style={{ color: "grey" }}>SHPACKYOU$</Text>
       <View style={styles.playPause}>
         <TouchableOpacity onPressIn={() => PreviousTrack()}>
           <AntDesign name="caretleft" size={40} color="white" />
@@ -111,34 +137,47 @@ const MusicPlayer: FC = () => {
           <AntDesign name="caretright" size={40} color="white" />
         </TouchableOpacity>
       </View>
-      <View>
-        {isLooping === false ? (
-          <TouchableOpacity
-            onPress={() => {
-              sound.setStatusAsync({ isLooping: true });
-              setIsLooping(!isLooping);
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons
-                name="repeat-off"
-                size={40}
-                color="white"
-              />
-            </View>
+      <View
+        style={{
+          flexDirection: "row",
+          justifyContent: "space-around",
+          width: "100%",
+        }}
+      >
+        <View>
+          {isLooping === false ? (
+            <TouchableOpacity
+              onPress={() => {
+                sound.setStatusAsync({ isLooping: true });
+                setIsLooping(!isLooping);
+              }}
+            >
+              <View>
+                <MaterialCommunityIcons
+                  name="repeat-off"
+                  size={40}
+                  color="white"
+                />
+              </View>
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              onPress={() => {
+                sound.setStatusAsync({ isLooping: false });
+                setIsLooping(!isLooping);
+              }}
+            >
+              <View>
+                <MaterialCommunityIcons name="repeat" size={40} color="white" />
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+        <View>
+          <TouchableOpacity onPress={AddTrackToPerson}>
+            <AntDesign name="plus" size={40} color="white" />
           </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            onPress={() => {
-              sound.setStatusAsync({ isLooping: false });
-              setIsLooping(!isLooping);
-            }}
-          >
-            <View>
-              <MaterialCommunityIcons name="repeat" size={40} color="white" />
-            </View>
-          </TouchableOpacity>
-        )}
+        </View>
       </View>
     </View>
   );

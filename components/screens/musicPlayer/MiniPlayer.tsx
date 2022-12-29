@@ -7,6 +7,7 @@ import { Audio } from "expo-av";
 import Slider from "@react-native-community/slider";
 import { Modalize } from "react-native-modalize";
 import { MusicContext } from "../../../providers/MusicProvider";
+import { useAuth } from "../../../providers/AuthProvider";
 
 // interface IMiniPlayerProps {
 //   onIsOpen: any;
@@ -79,7 +80,7 @@ const MiniPlayer: FC = () => {
         <TouchableOpacity onPress={() => ModalizeRef.current?.open()}>
           <View>
             <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
-            <Text style={{ color: "grey" }}>{songsNow[indexNow].author}</Text>
+            <Text style={{ color: "grey" }}>SHPACKYOU$</Text>
           </View>
         </TouchableOpacity>
 

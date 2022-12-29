@@ -13,9 +13,12 @@ import { API_URL } from "../../../providers/api";
 import { IOperationResult } from "../../../Interfaces/OperationResult";
 import { ITrack } from "../../../Interfaces/Tracks";
 import { IAlbum } from "../../../Interfaces/Album";
+import { useAuth } from "../../../providers/AuthProvider";
+import { AntDesign } from "@expo/vector-icons";
 
 const Home: FC = () => {
   const { playSound } = useMusic();
+  const { user, logout, getToken, token } = useAuth();
 
   const [tracks, setTracks] = useState<ITrack[]>();
 
@@ -24,18 +27,22 @@ const Home: FC = () => {
       console.log("НАЧАЛО МЕТОДА");
 
       const { data } = await axios
-        .get<IOperationResult<ITrack[]>>(
-          `${API_URL}/Tracks/get-all-added-tracks-person/1`
-        )
+        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`, {
+          headers: {
+            Authorization: `Bearer  ${token}`,
+          },
+        })
         .then((x) => {
           console.log(x);
           return x;
         });
       setTracks(data.result);
       console.log(data);
+      // console.log(token);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
+      // console.log(`Bearer ${token}`);
     } finally {
     }
   };
@@ -47,18 +54,32 @@ const Home: FC = () => {
   return (
     <View style={styles.container}>
       {tracks?.map((item: any, index: any) => (
-        <View>
+        <View style={{ flexDirection: "row" }}>
           <TouchableOpacity
             key={index}
             onPress={() => playSound(tracks, index)}
           >
             <View style={{ height: 50, alignItems: "center" }}>
               <Text style={{ color: "white" }}>{item.title}</Text>
-              <Text style={{ color: "grey" }}>{item.author}</Text>
+              <Text style={{ color: "grey" }}>
+                SHPACKYOU$
+                {/* {item.musicians[1].nickname} */}
+              </Text>
+            </View>
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <View>
+              <AntDesign name="plus" size={24} color="white" />
             </View>
           </TouchableOpacity>
         </View>
       ))}
+
+      <View>
+        <TouchableOpacity onPress={logout}>
+          <Text style={{ color: "white" }}>Выйти</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

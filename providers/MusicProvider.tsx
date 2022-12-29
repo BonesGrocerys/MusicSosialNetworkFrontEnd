@@ -22,7 +22,6 @@ interface IContext {
   setActiveMiniPlayer: Dispatch<SetStateAction<boolean>>;
   songs: ITrack[];
   albums: IAlbum[];
-
   sound: any;
   setSound: any;
   playSound: any;
@@ -36,7 +35,7 @@ interface IContext {
   trackPlayNow: any;
   songsNow: any;
   setSongsNow: any;
-  indexNow: any;
+  indexNow: number;
   setIndexNow: any;
   nextTrack: any;
   setNextTrack: any;
@@ -81,9 +80,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const ModalizeRef = useRef(null);
   const [trackPlayNow, setTrackPlayNow] = useState<any>();
   const [songsNow, setSongsNow] = useState<any>();
-  const [indexNow, setIndexNow] = useState<any>();
+  const [indexNow, setIndexNow] = useState<number | null>();
   const [nextTrack, setNextTrack] = useState<any>();
-  const [itemNow, setItemNow] = useState<any>();
+  // const [itemNow, setItemNow] = useState<any>();
   const [currentPosition, setCurrentPosition] = useState<number>(0);
   const [trackIndexNow, setTrackIndexNow] = useState<any>();
   const [isLooping, setIsLooping] = useState<boolean>(false);
@@ -173,6 +172,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setSound(sound);
       setPlayingStatus("playing");
       console.log("Playing Sound");
+
       return sound.setOnPlaybackStatusUpdate(OnPlaybackStatusUpdate);
     } else {
       ModalizeRef.current?.open();
@@ -192,7 +192,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     setPlaybackPositionNow(0);
     setSound(null);
     setKey(-1);
-    await playSound(songsNow, indexNow + 1);
+    await playSound(songsNow, indexNow! + 1);
     // await playSound(songsNow, itemNow, indexNow + 1);
     // }
 
@@ -226,7 +226,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setPlaybackPositionNow(0);
       setSound(null);
       setKey(-1);
-      playSound(songsNow, indexNow - 1);
+      playSound(songsNow, indexNow! - 1);
     }
   };
 
@@ -254,7 +254,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     setActiveMiniPlayer(false);
     setIndexNow(null);
     setSongsNow(null);
-    setItemNow(null);
+    // setItemNow(null);
   };
 
   useEffect(() => {
@@ -358,7 +358,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   ///////////////////////////////////////////////
   // Запрос моих треков для Home
   ///////////////////////////////////////////////
-  const [tracksHome, setTracksHome] = useState<any>();
+  // const [tracksHome, setTracksHome] = useState<any>();
 
   // const getAllTracksHome = async () => {
   //   try {
@@ -456,8 +456,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setIndexNow,
       nextTrack,
       setNextTrack,
-      itemNow,
-      setItemNow,
+      // itemNow,
+      // setItemNow,
       PreviousTrack,
       fullDuration,
       setFullDuration,
@@ -477,7 +477,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       calculateSeekBar,
       setDuration,
       // getAllTracksHome,
-      tracksHome,
+      // tracksHome,
       key,
     }),
     [
@@ -501,8 +501,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setIndexNow,
       nextTrack,
       setNextTrack,
-      itemNow,
-      setItemNow,
+      // itemNow,
+      // setItemNow,
       PreviousTrack,
       fullDuration,
       setFullDuration,
@@ -523,7 +523,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       calculateSeekBar,
       setDuration,
       // getAllTracksHome,
-      tracksHome,
+      // tracksHome,
       key,
     ]
   );
@@ -551,8 +551,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         setIndexNow,
         nextTrack,
         setNextTrack,
-        itemNow,
-        setItemNow,
+        // itemNow,
+        // setItemNow,
         PreviousTrack,
         fullDuration,
         setFullDuration,
@@ -572,7 +572,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         calculateSeekBar,
         setDuration,
         // getAllTracksHome,
-        tracksHome,
+        // tracksHome,
         key,
       }}
     >

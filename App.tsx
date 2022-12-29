@@ -17,15 +17,18 @@ import { useState, useEffect } from "react";
 import PlayerMenuBottom from "./components/screens/musicPlayer/PlayerMenuBottom";
 import PlayerModal from "./components/screens/musicPlayer/PlayerModal";
 import { useMusic, MusicProvider } from "./providers/MusicProvider";
+import { AuthProvider } from "./providers/AuthProvider";
 
 export default function App() {
   return (
     <SafeAreaView style={{ height: "100%" }}>
-      <MusicProvider>
-        <Navigation />
+      <AuthProvider>
+        <MusicProvider>
+          <Navigation />
 
-        <PlayerMenuBottom />
-      </MusicProvider>
+          <PlayerMenuBottom />
+        </MusicProvider>
+      </AuthProvider>
     </SafeAreaView>
   );
 }
