@@ -14,6 +14,7 @@ import React, {
 } from "react";
 import { ITrack } from "../Interfaces/Tracks";
 import { IAlbum } from "../Interfaces/Album";
+import { IMusicians } from "../Interfaces/Tracks";
 import axios from "axios";
 import { API_URL } from "./api";
 import { IOperationResult } from "../Interfaces/OperationResult";
@@ -63,6 +64,7 @@ interface IContext {
   getAllTracksHome: () => void;
   tracksHome: ITrack[] | undefined;
   key: string;
+  currentPlaylist: ITrack[];
 }
 
 type Props = { children: ReactNode };
@@ -405,32 +407,18 @@ export const MusicProvider: FC<Props> = ({ children }) => {
 
   const songs: ITrack[] = [
     {
+      id: 1,
       title: "21:10",
       author: "SHPACKYOU$",
-      atwork: require("../assets/image/eternal_doom_final.jpg"),
-      url: "http://192.168.0.105:5205/api/Tracks/get-track-file/4.mp3",
-      id: 1,
-    },
-    {
-      title: "21:12",
-      author: "123213$",
-      atwork: require("../assets/image/Anemone.jpg"),
-      url: "https://www.mboxdrive.com/72.mp3",
-      id: 2,
-    },
-    {
-      title: "Lower World",
-      author: "SECAMMORY",
-      atwork: require("../assets/image/LOWER_WORLD.jpg"),
-      url: "https://www.mboxdrive.com/57.mp3",
-      id: 3,
-    },
-    {
-      title: "NEMESIS",
-      author: "SHPACKYOU$",
       atwork: require("../assets/image/NEMESIS_FINAL_2.jpg"),
-      url: "https://www.mboxdrive.com/82p.mp3",
-      id: 4,
+      url: "http://192.168.0.105:5205/api/Tracks/get-track-file/4.mp3",
+      musicians: [
+        {
+          id: 1,
+          nickname: "SHPACKYOU$",
+          email: "email@mail.ru",
+        },
+      ],
     },
   ];
 
@@ -525,6 +513,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       // getAllTracksHome,
       // tracksHome,
       key,
+      currentPlaylist,
     ]
   );
   return (
@@ -574,6 +563,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         // getAllTracksHome,
         // tracksHome,
         key,
+        currentPlaylist,
       }}
     >
       {children}

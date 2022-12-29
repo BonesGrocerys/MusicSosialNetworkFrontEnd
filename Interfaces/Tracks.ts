@@ -4,4 +4,11 @@ export interface ITrack {
   atwork: string;
   url: string;
   id: number;
+  musicians: IMusicians[];
+}
+
+export interface IMusicians {
+  id: number;
+  nickname: string;
+  email: string;
 }

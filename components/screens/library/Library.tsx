@@ -13,6 +13,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { FontAwesome5 } from "@expo/vector-icons";
+import { useAuth } from "../../../providers/AuthProvider";
 
 // interface IRoomMain {
 //   route: any;
@@ -20,7 +21,7 @@ import { FontAwesome5 } from "@expo/vector-icons";
 
 const Library: FC = () => {
   const navigation = useNavigation();
-
+  const { logout } = useAuth();
   return (
     <View style={styles.mainContainer}>
       <TouchableOpacity onPress={() => navigation.navigate("MyTracks")}>
@@ -63,6 +64,13 @@ const Library: FC = () => {
           <AntDesign style={styles.icons} name="right" size={24} color="grey" />
         </View>
       </TouchableOpacity>
+      <View style={{ alignItems: "center" }}>
+        <TouchableOpacity onPress={logout}>
+          <Text style={{ color: "red", fontSize: 16, marginTop: 10 }}>
+            Выйти
+          </Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };

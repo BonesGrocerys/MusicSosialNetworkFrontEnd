@@ -50,81 +50,128 @@ const MyTracks: FC = () => {
     }
   };
 
+  const DeleteTrackToPerson = async (trackId: number) => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios.delete<IOperationResult<any>>(
+        `${API_URL}/Tracks/delete?personId=${user?.id}&trackId=${trackId}`,
+        {
+          headers: {
+            Authorization: `bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        alert("ok");
+        return true;
+      }
+      console.log(data);
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
   useEffect(() => {
     getAllTracks();
   }, []);
 
   return (
     <View style={styles.container}>
-      {tracks?.map((item, index) => (
-        <View style={styles.trackView}>
-          <View>
-            <TouchableOpacity
-              key={index}
-              onPress={() => playSound(tracks, index)}
-            >
-              {/* style={styles.trackContainer} */}
-              <View style={{ flexDirection: "row" }}>
-                <View style={{ marginLeft: 20 }}>
-                  <ImageBackground
-                    source={require("../../../../assets/image/eternal_doom_final.jpg")}
-                    style={{ width: 50, height: 50 }}
-                    imageStyle={{ borderRadius: 6 }}
-                  >
-                    {/* indexNow === index */}
-                    {key === tracks[index].url &&
-                    playingStatus === "playing" ? (
-                      <Image
-                        source={require("../../../../assets/Equalizer/gif-animation.gif")}
-                        style={{
-                          width: 30,
-                          height: 30,
-                          borderRadius: 5,
-                          marginLeft: 10,
-                          marginTop: 10,
-                        }}
-                      />
-                    ) : (
-                      <Text></Text>
-                    )}
-                  </ImageBackground>
-                </View>
-                <View
-                  style={{
-                    // alignItems: "center",
-                    marginTop: 4,
-                    marginLeft: 60,
-                  }}
+      {tracks ? (
+        <View>
+          {tracks?.reverse().map((item, index) => (
+            <View style={styles.trackView}>
+              <View>
+                <TouchableOpacity
+                  key={index}
+                  onPress={() => playSound(tracks, index)}
                 >
-                  <Text style={{ color: "white" }}>{item.title}</Text>
-                  <Text style={{ color: "grey" }}>{item.author}</Text>
-                </View>
+                  {/* style={styles.trackContainer} */}
+                  <View style={{ flexDirection: "row" }}>
+                    <View style={{ marginLeft: 20 }}>
+                      <ImageBackground
+                        source={require("../../../../assets/image/eternal_doom_final.jpg")}
+                        style={{ width: 50, height: 50 }}
+                        imageStyle={{ borderRadius: 6 }}
+                      >
+                        {/* indexNow === index */}
+                        {key === tracks[index].url &&
+                        playingStatus === "playing" ? (
+                          <Image
+                            source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                            style={{
+                              width: 30,
+                              height: 30,
+                              borderRadius: 5,
+                              marginLeft: 10,
+                              marginTop: 10,
+                            }}
+                          />
+                        ) : (
+                          <Text></Text>
+                        )}
+                      </ImageBackground>
+                    </View>
+                    <View
+                      style={{
+                        // alignItems: "center",
+                        marginTop: 4,
+                        marginLeft: 60,
+                      }}
+                    >
+                      <Text style={{ color: "white" }}>{item.title}</Text>
+                      <Text style={{ color: "grey" }}>{item.author}</Text>
+                    </View>
+                  </View>
+                </TouchableOpacity>
               </View>
-            </TouchableOpacity>
-          </View>
-          <View style={{ marginTop: 14, marginRight: 10 }}>
-            <TouchableOpacity onPress={() => ModalizeTrackRef.current?.open()}>
-              <Entypo name="dots-three-horizontal" size={24} color="white" />
-              {/* <Text style={{ color: "white" }}>{item.id} </Text> */}
-            </TouchableOpacity>
-          </View>
-          <Modalize snapPoint={20} ref={ModalizeTrackRef}>
-            <View style={styles.container}>
-              <TouchableOpacity
-                style={{ flexDirection: "row", alignItems: "center" }}
-              >
-                <View style={{ width: "15%", marginLeft: 10 }}>
-                  <Ionicons name="trash-outline" size={40} color="red" />
-                  <Text style={{ color: "white" }}>{item.id} </Text>
+              <View style={{ marginTop: 14, marginRight: 10 }}>
+                <TouchableOpacity
+                  onPress={() => ModalizeTrackRef.current?.open()}
+                >
+                  <Entypo
+                    name="dots-three-horizontal"
+                    size={24}
+                    color="white"
+                  />
+                  {/* <Text style={{ color: "white" }}>{item.id} </Text> */}
+                </TouchableOpacity>
+              </View>
+              <Modalize snapPoint={20} ref={ModalizeTrackRef}>
+                <View style={styles.container}>
+                  <TouchableOpacity
+                    onPress={() => DeleteTrackToPerson(item.id)}
+                    style={{ flexDirection: "row", alignItems: "center" }}
+                  >
+                    <View style={{ width: "15%", marginLeft: 10 }}>
+                      <Ionicons name="trash-outline" size={40} color="red" />
+                      <Text style={{ color: "white" }}>{item.id} </Text>
+                    </View>
+                    <Text style={{ color: "white", fontSize: 20 }}>
+                      Удалить аудиозапись
+                    </Text>
+                  </TouchableOpacity>
                 </View>
-                <Text style={{ color: "white", fontSize: 20 }}>
-                  Удалить аудиозапись
-                </Text>
-              </TouchableOpacity>
+              </Modalize>
             </View>
-          </Modalize>
+          ))}
         </View>
-      ))}
+      ) : (
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <Text style={{ color: "white", fontSize: 20 }}>
+            У вас пока нет треков
+          </Text>
+          <TouchableOpacity onPress={getAllTracks}>
+            <Ionicons name="reload" size={40} color="white" />
+          </TouchableOpacity>
+        </View>
+      )}
     </View>
   );
 };

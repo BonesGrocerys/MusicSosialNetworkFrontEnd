@@ -35,6 +35,7 @@ const MusicPlayer: FC = () => {
     isLooping,
     setIsLooping,
     songs,
+    currentPlaylist,
   } = useMusic();
 
   console.log(isLooping);
@@ -85,7 +86,7 @@ const MusicPlayer: FC = () => {
       <View>
         <Image
           style={{ width: 320, height: 320, marginTop: 15 }}
-          source={songs[3].atwork}
+          source={require("../../../assets/image/NEMESIS_FINAL_2.jpg")}
         />
       </View>
 
@@ -117,7 +118,14 @@ const MusicPlayer: FC = () => {
         }}
       />
       <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
-      <Text style={{ color: "grey" }}>SHPACKYOU$</Text>
+      {currentPlaylist ? (
+        currentPlaylist[indexNow].musicians.map((author) => (
+          <Text style={{ color: "grey" }}>{author.nickname}</Text>
+        ))
+      ) : (
+        <Text>уу</Text>
+      )}
+
       <View style={styles.playPause}>
         <TouchableOpacity onPressIn={() => PreviousTrack()}>
           <AntDesign name="caretleft" size={40} color="white" />
