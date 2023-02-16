@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import React, { FC, useContext, useEffect, useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity,Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useMusic } from "../../../providers/MusicProvider";
 import { Audio } from "expo-av";
@@ -38,16 +38,25 @@ const MiniPlayer: FC = () => {
     setSound,
     setDuration,
     songsNow,
+    getRandomTrack,
+    infinityTracks,
+    setKey,
   } = useMusic();
 
   useEffect(() => {
-    console.log("useEffect");
+    // console.log("useEffect");
     if (fullDuration - 100 < playbackPositionNow && isLooping === false) {
+     
+
       setFullDuration(101);
       // setDuration(0);
       setPlaybackPositionNow(0);
       // setSound(null);
-      NextTrack();
+      // NextTrack();
+       getRandomTrack(),
+    setKey(-1);
+    playSound(infinityTracks, 0)
+    PlayPause()
     }
   });
 
@@ -101,10 +110,12 @@ const MiniPlayer: FC = () => {
 
 const styles = StyleSheet.create({
   container: {
+    width: Dimensions.get("window").width,
+    // height: Dimensions.get("window").height,
     position: "absolute",
-    width: "100%",
-    height: 60,
     bottom: 64,
+    // width: "100%",
+    height: 64,
     zIndex: 1,
     backgroundColor: "#121212",
     alignItems: "center",

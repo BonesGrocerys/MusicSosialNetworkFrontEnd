@@ -35,7 +35,7 @@ const Navigation: FC = () => {
         <Tab.Navigator
           screenOptions={{
             tabBarStyle: {
-              height: 65,
+              height: "10%",
               paddingTop: 10,
               backgroundColor: "rgb(0,0,0)",
             },

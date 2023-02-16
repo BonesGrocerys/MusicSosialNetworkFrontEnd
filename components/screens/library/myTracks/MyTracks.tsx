@@ -20,7 +20,7 @@ import { ITrack } from "../../../../Interfaces/Tracks";
 import { useAuth } from "../../../../providers/AuthProvider";
 
 const MyTracks: FC = () => {
-  const { playSound, songsNow, indexNow, playingStatus, key } = useMusic();
+  const { playSound, songsNow, indexNow, playingStatus, key, currentPlaylist } = useMusic();
   const ModalizeTrackRef = useRef(null);
   const { user, getToken, token } = useAuth();
   const [tracks, setTracks] = useState<ITrack[]>();
@@ -75,15 +75,21 @@ const MyTracks: FC = () => {
     }
   };
 
+  const deleteHandler = async (trackId: number) => {
+    await DeleteTrackToPerson(trackId);
+    getAllTracks();
+  }
+
   useEffect(() => {
     getAllTracks();
+
   }, []);
 
   return (
     <View style={styles.container}>
       {tracks ? (
         <View>
-          {tracks?.reverse().map((item, index) => (
+          {tracks?.map((item, index) => (
             <View style={styles.trackView}>
               <View>
                 <TouchableOpacity
@@ -124,7 +130,9 @@ const MyTracks: FC = () => {
                       }}
                     >
                       <Text style={{ color: "white" }}>{item.title}</Text>
-                      <Text style={{ color: "grey" }}>{item.author}</Text>
+                      {item?.musicians?.map((musicians: any) => (
+                <Text style={{ color: "grey", flexDirection: "row" }}>{musicians.nickname} </Text>
+              ))}
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -144,7 +152,7 @@ const MyTracks: FC = () => {
               <Modalize snapPoint={20} ref={ModalizeTrackRef}>
                 <View style={styles.container}>
                   <TouchableOpacity
-                    onPress={() => DeleteTrackToPerson(item.id)}
+                    onPress={() => deleteHandler(item.id)}
                     style={{ flexDirection: "row", alignItems: "center" }}
                   >
                     <View style={{ width: "15%", marginLeft: 10 }}>

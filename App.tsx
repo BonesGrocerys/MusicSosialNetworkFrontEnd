@@ -23,7 +23,7 @@ export default function App() {
   return (
     <SafeAreaView style={{ height: "100%" }}>
       <AuthProvider>
-        <MusicProvider>
+        <MusicProvider >
           <Navigation />
 
           <PlayerMenuBottom />

@@ -16,12 +16,21 @@ import { IAlbum } from "../../../Interfaces/Album";
 import { useAuth } from "../../../providers/AuthProvider";
 import { AntDesign } from "@expo/vector-icons";
 import { ImageBackground } from "react-native";
+import { Ionicons } from "@expo/vector-icons";
 
 const Home: FC = () => {
-  const { playSound, key } = useMusic();
+  const { playSound, key, infinityTracks, getRandomTrack } = useMusic();
   const { user, logout, getToken, token } = useAuth();
 
   const [tracks, setTracks] = useState<ITrack[]>();
+
+  const PlayInfinityTracks = async () => {
+    await getRandomTrack(),
+    await playSound(infinityTracks, 0)
+    console.log('INFINITY TRACKS', infinityTracks);
+    
+  }
+
 
   const getAllTracksHome = async () => {
     try {
@@ -49,13 +58,13 @@ const Home: FC = () => {
   };
 
   useEffect(() => {
-    getAllTracksHome();
-    console.log(tracks);
+    getRandomTrack();
+    console.log(infinityTracks);
   }, []);
 
   return (
     <View style={styles.container}>
-      {tracks?.map((item: any, index: any) => (
+      {/* {tracks?.map((item: any, index: any) => (
         <View
           style={{
             flexDirection: "row",
@@ -79,13 +88,18 @@ const Home: FC = () => {
             <View style={{ height: 50, alignItems: "center", width: "80%" }}>
               <Text style={{ color: "white" }}>{item.title}</Text>
               {item?.musicians?.map((musicians: any) => (
-                <Text style={{ color: "grey" }}>{musicians.nickname}</Text>
+                <Text style={{ color: "grey", flexDirection: "row" }}>{musicians.nickname} </Text>
               ))}
             </View>
           </TouchableOpacity>
         </View>
-      ))}
-    </View>
+      ))} */}
+    <View style={{ paddingTop: 200, alignItems: "center"}}><Text style={{ color: "white"}}>
+      <TouchableOpacity onPress={PlayInfinityTracks} ><Ionicons name="ios-play" size={40} color="white" /></TouchableOpacity></Text>
+      <Text style={{ color: "white"}}> Моя волна</Text>
+      
+    </View>     
+  </View>
   );
 };
 

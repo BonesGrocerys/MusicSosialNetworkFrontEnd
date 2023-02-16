@@ -65,6 +65,11 @@ interface IContext {
   tracksHome: ITrack[] | undefined;
   key: string;
   currentPlaylist: ITrack[];
+  infinityTracksStatus: boolean;
+  getRandomTrack: any;
+  infinityTracks: any;
+  setKey: any;
+  setInfinityTracks: any;
 }
 
 type Props = { children: ReactNode };
@@ -88,6 +93,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const [currentPosition, setCurrentPosition] = useState<number>(0);
   const [trackIndexNow, setTrackIndexNow] = useState<any>();
   const [isLooping, setIsLooping] = useState<boolean>(false);
+  const [ infinityTracksStatus, setInfinityTracksStatus] = useState<boolean>(false);
+  const [ infinityTracks, setInfinityTracks] = useState<any>();
 
   const calculateSeekBar = (
     playbackPosition: number,
@@ -152,10 +159,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     setIsLooping(false);
     if (item === undefined) return 0;
     if (item[index].url !== key) {
-      // setFullDuration(0);
-      // setDuration(0);
-      // setPlaybackPositionNow(0);
-
       console.log(index, "-index");
       setSongsNow(item);
       setIndexNow(index);
@@ -189,12 +192,21 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     //   await playSound(songsNow, itemNow, indexNow + 1);
     // } else {
     // setIndexNow(0);
-    setIsLooping(false);
-    await setDuration(0);
-    setPlaybackPositionNow(0);
-    setSound(null);
+    // Работает
+    
+    await getRandomTrack(),
     setKey(-1);
-    await playSound(songsNow, indexNow! + 1);
+    await playSound(infinityTracks, 0)
+   
+    // setIsLooping(false);
+    // await setDuration(0);
+    // setPlaybackPositionNow(0);
+    // setSound(null);
+    // setKey(-1);
+    
+    // await playSound(songsNow, indexNow! + 1);
+
+
     // await playSound(songsNow, itemNow, indexNow + 1);
     // }
 
@@ -383,6 +395,33 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   //   }
   // };
 
+  const getRandomTrack = async () => {
+    try {
+      console.log("GET RANDOM TRACKS//////////////");
+
+      const { data } = await axios
+        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`, {
+          // headers: {
+          //   Authorization: `Bearer  ${token}`,
+          // },
+        })
+        .then((x) => {
+          console.log(x);
+          return x;
+        });
+        setInfinityTracks(data.result)
+      // setTracks(data.result);
+      console.log(data);
+      // console.log(token);
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+      // console.log(`Bearer ${token}`);
+    } finally {
+    }
+  };
+
+
   const [test, setTest] = useState<any>();
   const getTracks = async () => {
     try {
@@ -467,6 +506,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       // getAllTracksHome,
       // tracksHome,
       key,
+      infinityTracksStatus,
+      getRandomTrack,
+      infinityTracks,
+      setKey,
+      setInfinityTracks
     }),
     [
       activeMiniPlayer,
@@ -514,6 +558,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       // tracksHome,
       key,
       currentPlaylist,
+      infinityTracksStatus,
+      getRandomTrack,
+      infinityTracks,
+      setKey,
+      setInfinityTracks
     ]
   );
   return (
@@ -563,7 +612,13 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         // getAllTracksHome,
         // tracksHome,
         key,
-        currentPlaylist,
+        // currentPlaylist,
+        infinityTracksStatus,
+        getRandomTrack,
+        infinityTracks,
+        setKey,
+        setInfinityTracks
+       
       }}
     >
       {children}
