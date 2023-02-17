@@ -25,41 +25,38 @@ const Home: FC = () => {
   const [tracks, setTracks] = useState<ITrack[]>();
 
   const PlayInfinityTracks = async () => {
-    await getRandomTrack(),
-    await playSound(infinityTracks, 0)
-    console.log('INFINITY TRACKS', infinityTracks);
-    
-  }
-
-
-  const getAllTracksHome = async () => {
-    try {
-      console.log("НАЧАЛО МЕТОДА");
-
-      const { data } = await axios
-        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`, {
-          headers: {
-            Authorization: `Bearer  ${token}`,
-          },
-        })
-        .then((x) => {
-          console.log(x);
-          return x;
-        });
-      setTracks(data.result);
-      console.log(data);
-      // console.log(token);
-    } catch (e) {
-      console.log("ОШИБКА");
-      console.log(e);
-      // console.log(`Bearer ${token}`);
-    } finally {
-    }
+    await getRandomTrack(), await playSound(infinityTracks, 0);
+    console.log("INFINITY TRACKS", infinityTracks);
   };
+
+  // const getAllTracksHome = async () => {
+  //   try {
+  //     console.log("НАЧАЛО МЕТОДА");
+
+  //     const { data } = await axios
+  //       .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`, {
+  //         headers: {
+  //           Authorization: `Bearer  ${token}`,
+  //         },
+  //       })
+  //       .then((x) => {
+  //         console.log(x);
+  //         return x;
+  //       });
+  //     setTracks(data.result);
+  //     console.log(data);
+  //     // console.log(token);
+  //   } catch (e) {
+  //     console.log("ОШИБКА");
+  //     console.log(e);
+  //     // console.log(`Bearer ${token}`);
+  //   } finally {
+  //   }
+  // };
 
   useEffect(() => {
     getRandomTrack();
-    console.log(infinityTracks);
+    // console.log(infinityTracks);
   }, []);
 
   return (
@@ -94,12 +91,15 @@ const Home: FC = () => {
           </TouchableOpacity>
         </View>
       ))} */}
-    <View style={{ paddingTop: 200, alignItems: "center"}}><Text style={{ color: "white"}}>
-      <TouchableOpacity onPress={PlayInfinityTracks} ><Ionicons name="ios-play" size={40} color="white" /></TouchableOpacity></Text>
-      <Text style={{ color: "white"}}> Моя волна</Text>
-      
-    </View>     
-  </View>
+      <View style={{ paddingTop: 200, alignItems: "center" }}>
+        <Text style={{ color: "white" }}>
+          <TouchableOpacity onPress={PlayInfinityTracks}>
+            <Ionicons name="ios-play" size={40} color="white" />
+          </TouchableOpacity>
+        </Text>
+        <Text style={{ color: "white" }}> Моя волна</Text>
+      </View>
+    </View>
   );
 };
 

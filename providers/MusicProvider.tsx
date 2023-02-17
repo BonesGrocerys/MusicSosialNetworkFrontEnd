@@ -93,8 +93,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const [currentPosition, setCurrentPosition] = useState<number>(0);
   const [trackIndexNow, setTrackIndexNow] = useState<any>();
   const [isLooping, setIsLooping] = useState<boolean>(false);
-  const [ infinityTracksStatus, setInfinityTracksStatus] = useState<boolean>(false);
-  const [ infinityTracks, setInfinityTracks] = useState<any>();
+  const [infinityTracksStatus, setInfinityTracksStatus] =
+    useState<boolean>(false);
+  const [infinityTracks, setInfinityTracks] = useState<any>();
 
   const calculateSeekBar = (
     playbackPosition: number,
@@ -193,19 +194,17 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     // } else {
     // setIndexNow(0);
     // Работает
-    
-    await getRandomTrack(),
-    setKey(-1);
-    await playSound(infinityTracks, 0)
-   
+
+    await getRandomTrack(), setKey(-1);
+    await playSound(infinityTracks, 0);
+
     // setIsLooping(false);
     // await setDuration(0);
     // setPlaybackPositionNow(0);
     // setSound(null);
     // setKey(-1);
-    
-    // await playSound(songsNow, indexNow! + 1);
 
+    // await playSound(songsNow, indexNow! + 1);
 
     // await playSound(songsNow, itemNow, indexNow + 1);
     // }
@@ -397,10 +396,10 @@ export const MusicProvider: FC<Props> = ({ children }) => {
 
   const getRandomTrack = async () => {
     try {
-      console.log("GET RANDOM TRACKS//////////////");
+      // console.log("GET RANDOM TRACKS//////////////");
 
       const { data } = await axios
-        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`, {
+        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-random-track`, {
           // headers: {
           //   Authorization: `Bearer  ${token}`,
           // },
@@ -409,9 +408,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
           console.log(x);
           return x;
         });
-        setInfinityTracks(data.result)
+      setInfinityTracks(data.result);
       // setTracks(data.result);
-      console.log(data);
+      console.log("data", infinityTracks);
       // console.log(token);
     } catch (e) {
       console.log("ОШИБКА");
@@ -420,7 +419,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     } finally {
     }
   };
-
 
   const [test, setTest] = useState<any>();
   const getTracks = async () => {
@@ -510,7 +508,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       getRandomTrack,
       infinityTracks,
       setKey,
-      setInfinityTracks
+      setInfinityTracks,
     }),
     [
       activeMiniPlayer,
@@ -562,7 +560,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       getRandomTrack,
       infinityTracks,
       setKey,
-      setInfinityTracks
+      setInfinityTracks,
     ]
   );
   return (
@@ -617,8 +615,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         getRandomTrack,
         infinityTracks,
         setKey,
-        setInfinityTracks
-       
+        setInfinityTracks,
       }}
     >
       {children}
