@@ -1,8 +1,5 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import React, { FC, useEffect, useState } from "react";
-import PlayerMenuBottom from "./PlayerMenuBottom";
-import { Dispatch, SetStateAction } from "react";
-import { Entypo } from "@expo/vector-icons";
 import { Dimensions } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useMusic } from "../../../providers/MusicProvider";
@@ -34,8 +31,8 @@ const MusicPlayer: FC = () => {
     RenderCurrentTime,
     isLooping,
     setIsLooping,
-    songs,
     currentPlaylist,
+    infinityTracksStatus,
   } = useMusic();
 
   console.log(isLooping);
@@ -102,7 +99,7 @@ const MusicPlayer: FC = () => {
       </View>
 
       <Slider
-        style={{ width: "100%", height: 40 }}
+        style={{ width: "85%", height: 40 }}
         minimumValue={0}
         maximumValue={1}
         value={duration}
@@ -127,14 +124,22 @@ const MusicPlayer: FC = () => {
       )}
 
       <View style={styles.playPause}>
-        <TouchableOpacity onPressIn={() => PreviousTrack()}>
-          <AntDesign name="caretleft" size={40} color="white" />
-        </TouchableOpacity>
-        <TouchableOpacity onPress={PlayPause}>
+        {infinityTracksStatus === true ? (
+          <AntDesign name="caretleft" size={40} color="grey" />
+        ) : (
+          <TouchableOpacity onPressIn={() => PreviousTrack()}>
+            <AntDesign name="caretleft" size={40} color="white" />
+          </TouchableOpacity>
+        )}
+
+        <TouchableOpacity
+          onPress={PlayPause}
+          style={{ marginLeft: 10, marginRight: 10 }}
+        >
           {playingStatus === "playing" ? (
-            <Ionicons name="ios-pause" size={40} color="white" />
+            <Ionicons name="ios-pause" size={50} color="white" />
           ) : (
-            <Ionicons name="ios-play" size={40} color="white" />
+            <Ionicons name="ios-play" size={50} color="white" />
           )}
         </TouchableOpacity>
         <TouchableOpacity
@@ -204,6 +209,8 @@ const styles = StyleSheet.create({
   playPause: {
     justifyContent: "space-between",
     flexDirection: "row",
+    alignContent: "center",
+    alignItems: "center",
   },
   time: {
     justifyContent: "space-between",

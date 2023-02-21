@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable, Image } from "react-native";
 import React, { FC, useContext, useEffect, useState } from "react";
-import { TouchableOpacity,Dimensions } from "react-native";
+import { TouchableOpacity, Dimensions } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useMusic } from "../../../providers/MusicProvider";
 import { Audio } from "expo-av";
@@ -8,6 +8,7 @@ import Slider from "@react-native-community/slider";
 import { Modalize } from "react-native-modalize";
 import { MusicContext } from "../../../providers/MusicProvider";
 import { useAuth } from "../../../providers/AuthProvider";
+import { AntDesign } from "@expo/vector-icons";
 
 // interface IMiniPlayerProps {
 //   onIsOpen: any;
@@ -31,32 +32,36 @@ const MiniPlayer: FC = () => {
     setFullDuration,
     setPlaybackPositionNow,
     NextTrack,
-    trackIndexNow,
     isLooping,
     indexNow,
-    tracks,
-    setSound,
-    setDuration,
     songsNow,
     getRandomTrack,
     infinityTracks,
+    infinityTracksStatus,
     setKey,
+    duration,
   } = useMusic();
 
   useEffect(() => {
     // console.log("useEffect");
     if (fullDuration - 100 < playbackPositionNow && isLooping === false) {
-     
+      if (infinityTracksStatus === false) {
+        setFullDuration(101);
+        // setDuration(0);
+        setPlaybackPositionNow(0);
+        // setSound(null);
+        NextTrack();
+      } else {
+        setFullDuration(101);
+        // setDuration(0);
+        setPlaybackPositionNow(0);
+        // setSound(null);
+        // NextTrack();
 
-      setFullDuration(101);
-      // setDuration(0);
-      setPlaybackPositionNow(0);
-      // setSound(null);
-      // NextTrack();
-       getRandomTrack(),
-    setKey(-1);
-    playSound(infinityTracks, 0)
-    PlayPause()
+        getRandomTrack(), setKey(-1);
+        playSound(infinityTracks, 0);
+        PlayPause();
+      }
     }
   });
 
@@ -74,7 +79,16 @@ const MiniPlayer: FC = () => {
   }, [sound]);
 
   return (
-    <View>
+    <View style={styles.slider}>
+      {/* <Slider
+        style={{ width: "100%", height: 10, marginBottom: 125 }}
+        minimumValue={0}
+        maximumValue={1}
+        value={duration}
+        minimumTrackTintColor="yellow"
+        maximumTrackTintColor="grey"
+        disabled={true}
+      /> */}
       <View style={styles.container}>
         <TouchableOpacity onPress={PlayPause}>
           <View style={{ marginLeft: 10 }}>
@@ -129,6 +143,11 @@ const styles = StyleSheet.create({
   },
   text: {
     marginVertical: "50%",
+  },
+  slider: {
+    position: "absolute",
+    bottom: 2,
+    width: Dimensions.get("window").width,
   },
 });
 

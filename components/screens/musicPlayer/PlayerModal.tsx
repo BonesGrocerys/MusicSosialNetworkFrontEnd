@@ -45,7 +45,7 @@ const PlayerModal: FC = () => {
     <View>
       <MiniPlayer />
 
-      <Modalize ref={ModalizeRef}>
+      <Modalize ref={ModalizeRef} scrollViewProps={{ scrollEnabled: false }}>
         <MusicPlayer />
       </Modalize>
     </View>

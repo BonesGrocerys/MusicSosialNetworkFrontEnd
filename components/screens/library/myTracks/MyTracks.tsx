@@ -20,7 +20,16 @@ import { ITrack } from "../../../../Interfaces/Tracks";
 import { useAuth } from "../../../../providers/AuthProvider";
 
 const MyTracks: FC = () => {
-  const { playSound, songsNow, indexNow, playingStatus, key, currentPlaylist } = useMusic();
+  const {
+    playSound,
+    songsNow,
+    indexNow,
+    playingStatus,
+    key,
+    currentPlaylist,
+    setInfinityTracksStatus,
+    infinityTracksStatus,
+  } = useMusic();
   const ModalizeTrackRef = useRef(null);
   const { user, getToken, token } = useAuth();
   const [tracks, setTracks] = useState<ITrack[]>();
@@ -75,14 +84,20 @@ const MyTracks: FC = () => {
     }
   };
 
+  const playMyTracks = async (index: number) => {
+    await setInfinityTracksStatus(false);
+    console.log("infinityTracksStatus", infinityTracksStatus);
+
+    await playSound(tracks, index);
+  };
+
   const deleteHandler = async (trackId: number) => {
     await DeleteTrackToPerson(trackId);
     getAllTracks();
-  }
+  };
 
   useEffect(() => {
     getAllTracks();
-
   }, []);
 
   return (
@@ -94,7 +109,7 @@ const MyTracks: FC = () => {
               <View>
                 <TouchableOpacity
                   key={index}
-                  onPress={() => playSound(tracks, index)}
+                  onPress={() => playMyTracks(index)}
                 >
                   {/* style={styles.trackContainer} */}
                   <View style={{ flexDirection: "row" }}>
@@ -131,8 +146,10 @@ const MyTracks: FC = () => {
                     >
                       <Text style={{ color: "white" }}>{item.title}</Text>
                       {item?.musicians?.map((musicians: any) => (
-                <Text style={{ color: "grey", flexDirection: "row" }}>{musicians.nickname} </Text>
-              ))}
+                        <Text style={{ color: "grey", flexDirection: "row" }}>
+                          {musicians.nickname}{" "}
+                        </Text>
+                      ))}
                     </View>
                   </View>
                 </TouchableOpacity>

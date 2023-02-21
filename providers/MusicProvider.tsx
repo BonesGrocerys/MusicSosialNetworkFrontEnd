@@ -70,6 +70,7 @@ interface IContext {
   infinityTracks: any;
   setKey: any;
   setInfinityTracks: any;
+  setInfinityTracksStatus: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type Props = { children: ReactNode };
@@ -167,7 +168,12 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setKey(item[index].url);
       setActiveMiniPlayer(true);
       console.log("Loading Sound");
-      await Audio.setAudioModeAsync({ playsInSilentModeIOS: true });
+      await Audio.setAudioModeAsync({
+        allowsRecordingIOS: false,
+        playsInSilentModeIOS: true,
+        staysActiveInBackground: true,
+      });
+
       const url = item[index].url;
       const { sound } = await Audio.Sound.createAsync(
         { uri: url },
@@ -186,48 +192,26 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   }
 
   async function NextTrack() {
-    // if (songsNow[indexNow + 1].url === undefined) {
-    //   setDuration(0);
-    //   setSound(null);
-    //   setKey(-1);
-    //   await playSound(songsNow, itemNow, indexNow + 1);
-    // } else {
-    // setIndexNow(0);
-    // Работает
+    if (infinityTracksStatus === true) {
+      console.log(infinityTracksStatus, "NEXT TRACK");
 
-    await getRandomTrack(), setKey(-1);
-    await playSound(infinityTracks, 0);
-
-    // setIsLooping(false);
-    // await setDuration(0);
-    // setPlaybackPositionNow(0);
-    // setSound(null);
-    // setKey(-1);
-
-    // await playSound(songsNow, indexNow! + 1);
-
-    // await playSound(songsNow, itemNow, indexNow + 1);
-    // }
-
-    // console.log(indexNow, "NextTrack");
+      await getRandomTrack(), setKey(-1);
+      await playSound(infinityTracks, 0);
+    } else {
+      setIsLooping(false);
+      await setDuration(0);
+      setPlaybackPositionNow(0);
+      setSound(null);
+      setKey(-1);
+      await playSound(songsNow, indexNow! + 1);
+    }
   }
 
   async function LoopingTrack() {
-    // if (songsNow[indexNow + 1].url === undefined) {
-    //   setDuration(0);
-    //   setSound(null);
-    //   setKey(-1);
-    //   await playSound(songsNow, itemNow, indexNow + 1);
-    // } else {
-    // setIndexNow(0);
     setPlaybackPositionNow(0);
     setSound(null);
     setKey(-1);
     await playSound(indexNow, songsNow);
-    // await playSound(songsNow, itemNow, indexNow + 1);
-    // }
-
-    // console.log(indexNow, "NextTrack");
   }
 
   const PreviousTrack = async () => {
@@ -267,7 +251,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     setActiveMiniPlayer(false);
     setIndexNow(null);
     setSongsNow(null);
-    // setItemNow(null);
+    setInfinityTracksStatus(false);
+    console.log(infinityTracksStatus, "INFINITY STOP");
   };
 
   useEffect(() => {
@@ -509,6 +494,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       infinityTracks,
       setKey,
       setInfinityTracks,
+      setInfinityTracksStatus,
     }),
     [
       activeMiniPlayer,
@@ -561,6 +547,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       infinityTracks,
       setKey,
       setInfinityTracks,
+      setInfinityTracksStatus,
     ]
   );
   return (
@@ -616,6 +603,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         infinityTracks,
         setKey,
         setInfinityTracks,
+        setInfinityTracksStatus,
       }}
     >
       {children}

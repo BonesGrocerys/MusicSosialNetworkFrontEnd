@@ -19,12 +19,20 @@ import { ImageBackground } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 const Home: FC = () => {
-  const { playSound, key, infinityTracks, getRandomTrack } = useMusic();
+  const {
+    playSound,
+    key,
+    infinityTracks,
+    getRandomTrack,
+
+    setInfinityTracksStatus,
+  } = useMusic();
   const { user, logout, getToken, token } = useAuth();
 
   const [tracks, setTracks] = useState<ITrack[]>();
 
   const PlayInfinityTracks = async () => {
+    setInfinityTracksStatus(true);
     await getRandomTrack(), await playSound(infinityTracks, 0);
     console.log("INFINITY TRACKS", infinityTracks);
   };
