@@ -16,7 +16,7 @@ import { Modalize } from "react-native-modalize";
 import axios from "axios";
 import { API_URL } from "../../../../providers/api";
 import { IOperationResult } from "../../../../Interfaces/OperationResult";
-import { ITrack } from "../../../../Interfaces/Tracks";
+import { IMusicians, ITrack } from "../../../../Interfaces/Tracks";
 import { useAuth } from "../../../../providers/AuthProvider";
 
 const MyTracks: FC = () => {
@@ -111,45 +111,78 @@ const MyTracks: FC = () => {
                   key={index}
                   onPress={() => playMyTracks(index)}
                 >
-                  {/* style={styles.trackContainer} */}
                   <View style={{ flexDirection: "row" }}>
                     <View style={{ marginLeft: 20 }}>
-                      <ImageBackground
-                        source={require("../../../../assets/image/eternal_doom_final.jpg")}
-                        style={{ width: 50, height: 50 }}
-                        imageStyle={{ borderRadius: 6 }}
-                      >
-                        {/* indexNow === index */}
-                        {key === tracks[index].url &&
-                        playingStatus === "playing" ? (
-                          <Image
-                            source={require("../../../../assets/Equalizer/gif-animation.gif")}
-                            style={{
-                              width: 30,
-                              height: 30,
-                              borderRadius: 5,
-                              marginLeft: 10,
-                              marginTop: 10,
-                            }}
-                          />
-                        ) : (
-                          <Text></Text>
-                        )}
-                      </ImageBackground>
+                      {item?.cover ? (
+                        <ImageBackground
+                          source={{
+                            uri: `data:image/jpeg;base64,${item?.cover}`,
+                          }}
+                          style={{ width: 50, height: 50 }}
+                          imageStyle={{ borderRadius: 6 }}
+                        >
+                          {/* indexNow === index */}
+                          {key === tracks[index].url &&
+                          playingStatus === "playing" ? (
+                            <Image
+                              source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                              style={{
+                                width: 30,
+                                height: 30,
+                                borderRadius: 5,
+                                marginLeft: 10,
+                                marginTop: 10,
+                              }}
+                            />
+                          ) : (
+                            <Text></Text>
+                          )}
+                        </ImageBackground>
+                      ) : (
+                        <ImageBackground
+                          source={require("../../../../assets/image/Anemone.jpg")}
+                          style={{ width: 50, height: 50 }}
+                          imageStyle={{ borderRadius: 6 }}
+                        >
+                          {/* indexNow === index */}
+                          {key === tracks[index].url &&
+                          playingStatus === "playing" ? (
+                            <Image
+                              source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                              style={{
+                                width: 30,
+                                height: 30,
+                                borderRadius: 5,
+                                marginLeft: 10,
+                                marginTop: 10,
+                              }}
+                            />
+                          ) : (
+                            <Text></Text>
+                          )}
+                        </ImageBackground>
+                      )}
                     </View>
                     <View
                       style={{
-                        // alignItems: "center",
                         marginTop: 4,
-                        marginLeft: 60,
+                        marginLeft: 40,
                       }}
                     >
-                      <Text style={{ color: "white" }}>{item.title}</Text>
-                      {item?.musicians?.map((musicians: any) => (
-                        <Text style={{ color: "grey", flexDirection: "row" }}>
-                          {musicians.nickname}{" "}
-                        </Text>
-                      ))}
+                      <Text style={{ color: "white" }}>
+                        {item.title.length > 10
+                          ? `${item.title.substring(0, 19)}...`
+                          : item.title}
+                      </Text>
+                      <View
+                        style={{ flexDirection: "row", flexWrap: "nowrap" }}
+                      >
+                        {item?.musicians?.map((musicians: IMusicians) => (
+                          <Text style={{ color: "grey" }}>
+                            {musicians.nickname}&nbsp;
+                          </Text>
+                        ))}
+                      </View>
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -163,10 +196,13 @@ const MyTracks: FC = () => {
                     size={24}
                     color="white"
                   />
-                  {/* <Text style={{ color: "white" }}>{item.id} </Text> */}
                 </TouchableOpacity>
               </View>
-              <Modalize snapPoint={20} ref={ModalizeTrackRef}>
+              <Modalize
+                snapPoint={2}
+                ref={ModalizeTrackRef}
+                scrollViewProps={{ scrollEnabled: false }}
+              >
                 <View style={styles.container}>
                   <TouchableOpacity
                     onPress={() => deleteHandler(item.id)}
@@ -208,13 +244,10 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     opacity: 0.93,
     flex: 1,
-    // flexDirection: "row",
   },
   trackContainer: {
     height: 50,
     width: Dimensions.get("window").width,
-    // justifyContent: "space-between",
-    // display: "flex",
     flexDirection: "row",
     marginTop: 10,
   },

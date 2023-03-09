@@ -34,8 +34,8 @@ interface IContext {
   ModalizeRef: any;
   NextTrack: any;
   trackPlayNow: any;
-  songsNow: any;
-  setSongsNow: any;
+  songsNow: ITrack | null | undefined;
+  setSongsNow: React.Dispatch<React.SetStateAction<ITrack | null | undefined>>;
   indexNow: number;
   setIndexNow: any;
   nextTrack: any;
@@ -87,10 +87,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const [key, setKey] = useState<any>("null");
   const ModalizeRef = useRef(null);
   const [trackPlayNow, setTrackPlayNow] = useState<any>();
-  const [songsNow, setSongsNow] = useState<any>();
+  const [songsNow, setSongsNow] = useState<ITrack | null>();
   const [indexNow, setIndexNow] = useState<number | null>();
   const [nextTrack, setNextTrack] = useState<any>();
-  // const [itemNow, setItemNow] = useState<any>();
   const [currentPosition, setCurrentPosition] = useState<number>(0);
   const [trackIndexNow, setTrackIndexNow] = useState<any>();
   const [isLooping, setIsLooping] = useState<boolean>(false);

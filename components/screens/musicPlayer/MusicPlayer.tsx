@@ -83,7 +83,9 @@ const MusicPlayer: FC = () => {
       <View>
         <Image
           style={{ width: 320, height: 320, marginTop: 15 }}
-          source={require("../../../assets/image/NEMESIS_FINAL_2.jpg")}
+          source={{
+            uri: `data:image/png;base64,${songsNow?.[indexNow]?.cover}`,
+          }}
         />
       </View>
 
@@ -103,8 +105,6 @@ const MusicPlayer: FC = () => {
         minimumValue={0}
         maximumValue={1}
         value={duration}
-        // minimumTrackTintColor="#FFFFFF"
-        // maximumTrackTintColor="#000000"
         onValueChange={(duration) =>
           setCurrentPosition(convertTime((duration * fullDuration) / 1000))
         }
@@ -115,13 +115,13 @@ const MusicPlayer: FC = () => {
         }}
       />
       <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
-      {currentPlaylist ? (
-        currentPlaylist[indexNow].musicians.map((author) => (
-          <Text style={{ color: "grey" }}>{author.nickname}</Text>
-        ))
-      ) : (
-        <Text>уу</Text>
-      )}
+      <View style={{ flexDirection: "row", flexWrap: "nowrap" }}>
+        {songsNow?.[indexNow]?.musicians?.map((musicians: any) => (
+          <View key={musicians.id}>
+            <Text style={{ color: "grey" }}>{musicians.nickname} &nbsp;</Text>
+          </View>
+        ))}
+      </View>
 
       <View style={styles.playPause}>
         {infinityTracksStatus === true ? (
@@ -204,7 +204,6 @@ const styles = StyleSheet.create({
     backgroundColor: "#121212",
     alignItems: "center",
     justifyContent: "center",
-    // position: "absolute",
   },
   playPause: {
     justifyContent: "space-between",
@@ -225,9 +224,6 @@ const styles = StyleSheet.create({
   white: {
     color: "white",
   },
-  // text: {
-  //   marginVertical: "50%",
-  // },
 });
 
 export default MusicPlayer;

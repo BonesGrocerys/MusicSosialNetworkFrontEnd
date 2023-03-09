@@ -9,14 +9,8 @@ import { Modalize } from "react-native-modalize";
 import { MusicContext } from "../../../providers/MusicProvider";
 import { useAuth } from "../../../providers/AuthProvider";
 import { AntDesign } from "@expo/vector-icons";
+import { IMusicians } from "../../../Interfaces/Tracks";
 
-// interface IMiniPlayerProps {
-//   onIsOpen: any;
-//   songs: any;
-//   duration: any;
-//   playbackStatus: any;
-// }
-// const MiniPlayer: FC<IMiniPlayerProps> = ({ onIsOpen }) => {
 const MiniPlayer: FC = () => {
   const {
     songs,
@@ -79,44 +73,69 @@ const MiniPlayer: FC = () => {
   }, [sound]);
 
   return (
-    <View style={styles.slider}>
-      {/* <Slider
-        style={{ width: "100%", height: 10, marginBottom: 125 }}
-        minimumValue={0}
-        maximumValue={1}
-        value={duration}
-        minimumTrackTintColor="yellow"
-        maximumTrackTintColor="grey"
-        disabled={true}
-      /> */}
+    <View>
       <View style={styles.container}>
-        <TouchableOpacity onPress={PlayPause}>
-          <View style={{ marginLeft: 10 }}>
-            {playingStatus === "playing" ? (
-              <Ionicons name="ios-pause" size={30} color="white" />
-            ) : (
-              <Ionicons name="ios-play" size={30} color="white" />
-            )}
-          </View>
-        </TouchableOpacity>
+        <View>
+          <Slider
+            style={{ width: "100%", height: 0 }}
+            minimumValue={0}
+            maximumValue={1}
+            disabled={true}
+            thumbTintColor={"transparent"}
+            minimumTrackTintColor={"yellow"}
+            // thumbStyle={{ width: 0, height: 0 }}
+            value={duration}
+          />
+        </View>
+        <View style={styles.content}>
+          <TouchableOpacity onPress={PlayPause}>
+            <View style={{ marginLeft: 10 }}>
+              {playingStatus === "playing" ? (
+                <Ionicons name="ios-pause" size={30} color="white" />
+              ) : (
+                <Ionicons name="ios-play" size={30} color="white" />
+              )}
+            </View>
+          </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => ModalizeRef.current?.open()}>
-          <View>
-            <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
-            <Text style={{ color: "grey" }}>SHPACKYOU$</Text>
-          </View>
-        </TouchableOpacity>
+          <TouchableOpacity onPress={() => ModalizeRef.current?.open()}>
+            <View>
+              <Text style={{ color: "white" }}>
+                {songsNow?.[indexNow]?.title}
+              </Text>
+            </View>
+            <View style={{ flexDirection: "row", flexWrap: "nowrap" }}>
+              {songsNow?.[indexNow]?.musicians && (
+                <Text style={{ color: "grey" }}>
+                  <View style={{ flexDirection: "row", flexWrap: "nowrap" }}>
+                    {songsNow?.[indexNow]?.musicians && (
+                      <Text style={{ color: "grey" }}>
+                        {songsNow[indexNow].musicians
+                          .reduce((text: string, musician: any) => {
+                            let nickname = musician.nickname;
 
-        <TouchableOpacity>
-          <View style={{ marginRight: 20 }}>
-            <Ionicons
-              onPress={stopPlaying}
-              name="close-outline"
-              size={24}
-              color="white"
-            />
-          </View>
-        </TouchableOpacity>
+                            return `${text}${nickname}, `;
+                          }, "")
+                          .slice(0, -2)}
+                      </Text>
+                    )}
+                  </View>
+                </Text>
+              )}
+            </View>
+          </TouchableOpacity>
+
+          <TouchableOpacity>
+            <View style={{ marginRight: 20 }}>
+              <Ionicons
+                onPress={stopPlaying}
+                name="close-outline"
+                size={24}
+                color="white"
+              />
+            </View>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -125,29 +144,21 @@ const MiniPlayer: FC = () => {
 const styles = StyleSheet.create({
   container: {
     width: Dimensions.get("window").width,
-    // height: Dimensions.get("window").height,
     position: "absolute",
     bottom: 64,
-    // width: "100%",
-    height: 64,
+    height: 70,
     zIndex: 1,
-    backgroundColor: "#121212",
-    alignItems: "center",
-    borderTopColor: "#1b1b1b",
-    borderTopWidth: 2,
-    // borderBottomWidth: 2,
-    color: "white",
-    flexDirection: "row",
-    flex: 1,
-    justifyContent: "space-between",
+    backgroundColor: "#101010",
   },
   text: {
     marginVertical: "50%",
   },
-  slider: {
-    position: "absolute",
-    bottom: 2,
-    width: Dimensions.get("window").width,
+  content: {
+    color: "white",
+    flexDirection: "row",
+    flex: 1,
+    justifyContent: "space-between",
+    alignItems: "center",
   },
 });
 

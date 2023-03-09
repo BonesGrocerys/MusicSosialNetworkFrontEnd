@@ -1,6 +1,11 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "baseUrl": "./src",
+    "paths": {
+      "*": ["node_modules/*"],
+      "base-64": ["./typings/base-64.d.ts"]
+    }
   }
 }
