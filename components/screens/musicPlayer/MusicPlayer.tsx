@@ -1,20 +1,28 @@
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useState, useRef, Component } from "react";
 import { Dimensions } from "react-native";
 import Slider from "@react-native-community/slider";
 import { useMusic } from "../../../providers/MusicProvider";
 import { Ionicons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
-import MultiSlider from "react-native-multi-slider";
 import { Audio } from "expo-av";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { ImageBackground } from "react-native";
 import { useAuth } from "../../../providers/AuthProvider";
 import { IOperationResult } from "../../../Interfaces/OperationResult";
 import { API_URL } from "../../../providers/api";
+import { Modalize } from "react-native-modalize";
 import axios from "axios";
+import { IMusicians } from "../../../Interfaces/Tracks";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { TypeRootStackParamList } from "../../../navigation/types";
 
-const MusicPlayer: FC = () => {
+type MusicPlayerProps = {
+  navigation: NavigationProp<TypeRootStackParamList>;
+};
+
+const MusicPlayer: FC<MusicPlayerProps> = ({ navigation }) => {
+  const ModalizeTrackRef = useRef<any>(null);
+  // const navigation = useNavigation();
   const [currentPosition, setCurrentPosition] = useState<number>(0);
   const { user, logout, getToken, token } = useAuth();
   const {
@@ -43,7 +51,7 @@ const MusicPlayer: FC = () => {
 
       const { data } = await axios
         .get(
-          `${API_URL}/Tracks/add-track-to-peson?personId=${user?.id}&trackId=${songsNow[indexNow].id}`,
+          `${API_URL}/Tracks/add-track-to-peson?personId=${user?.id}&trackId=${songsNow?.[indexNow].id}`,
           {
             headers: {
               Authorization: `Bearer  ${token}`,
@@ -66,18 +74,6 @@ const MusicPlayer: FC = () => {
     }
   };
 
-  // useEffect(() => {
-  //   AddTrackToPerson();
-  // }, []);
-  // const [activeIcon, setActiveIcon] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   if (fullDuration - 100 < playbackPositionNow) {
-  //     setFullDuration(101);
-  //     setPlaybackPositionNow(null);
-  //     NextTrack();
-  //   }
-  // });
   return (
     <View style={styles.container}>
       <View>
@@ -114,13 +110,18 @@ const MusicPlayer: FC = () => {
           await PlayPause();
         }}
       />
-      <Text style={{ color: "white" }}>{songsNow[indexNow].title}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "nowrap" }}>
-        {songsNow?.[indexNow]?.musicians?.map((musicians: any) => (
-          <View key={musicians.id}>
-            <Text style={{ color: "grey" }}>{musicians.nickname} &nbsp;</Text>
-          </View>
-        ))}
+      <Text style={{ color: "white" }}>{songsNow?.[indexNow].title}</Text>
+      <View>
+        <TouchableOpacity
+          onPress={() => ModalizeTrackRef.current?.open()}
+          style={{ flexDirection: "row", flexWrap: "nowrap" }}
+        >
+          {songsNow?.[indexNow]?.musicians?.map((musicians: any) => (
+            <View key={musicians.id}>
+              <Text style={{ color: "grey" }}>{musicians.nickname} &nbsp;</Text>
+            </View>
+          ))}
+        </TouchableOpacity>
       </View>
 
       <View style={styles.playPause}>
@@ -192,6 +193,33 @@ const MusicPlayer: FC = () => {
           </TouchableOpacity>
         </View>
       </View>
+      {songsNow?.[indexNow]?.musicians?.map((musician: IMusicians) => (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("MusicianPage", { ...musician })}
+        >
+          <Text style={{ color: "white" }}>{musician.nickname}</Text>
+        </TouchableOpacity>
+      ))}
+
+      <Modalize
+        snapPoint={250}
+        ref={ModalizeTrackRef}
+        scrollViewProps={{ scrollEnabled: false }}
+      >
+        <View>
+          {/* {songsNow?.[indexNow].musicians?.map((musician: IMusicians) => (
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("MusicianPage", {
+                  params: { musicianId: musician.id },
+                } as any)
+              }
+            >
+              <Text>{musician.nickname}</Text>
+            </TouchableOpacity>
+          ))} */}
+        </View>
+      </Modalize>
     </View>
   );
 };

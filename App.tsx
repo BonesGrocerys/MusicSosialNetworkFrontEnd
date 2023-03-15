@@ -18,12 +18,20 @@ import PlayerMenuBottom from "./components/screens/musicPlayer/PlayerMenuBottom"
 import PlayerModal from "./components/screens/musicPlayer/PlayerModal";
 import { useMusic, MusicProvider } from "./providers/MusicProvider";
 import { AuthProvider } from "./providers/AuthProvider";
+import MusicianPage from "./components/screens/musicians/MusicianPage";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { TypeRootStackParamList } from "./navigation/types";
+
+// type App = {
+//   navigation: NavigationProp<TypeRootStackParamList>;
+// };
 
 export default function App() {
+  // const navigation = useNavigation();
   return (
     <SafeAreaView style={{ height: "100%" }}>
       <AuthProvider>
-        <MusicProvider >
+        <MusicProvider>
           <Navigation />
 
           <PlayerMenuBottom />

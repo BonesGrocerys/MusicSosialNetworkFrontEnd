@@ -1,64 +1,69 @@
 import {
   View,
   Text,
-  StyleSheet,
-  Dimensions,
-  Pressable,
   TouchableOpacity,
+  ImageBackground,
+  Dimensions,
+  StyleSheet,
+  Image,
 } from "react-native";
-import React, { FC, useState, useRef, useEffect } from "react";
-import { useMusic } from "../../../../providers/MusicProvider";
-import { Ionicons } from "@expo/vector-icons";
-import { Image } from "react-native";
-import { ImageBackground } from "react-native";
-import { Entypo } from "@expo/vector-icons";
-import { Modalize } from "react-native-modalize";
+import React, { FC, useState, useEffect, useRef } from "react";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { TypeRootStackParamList } from "../../../navigation/types";
+import { useMusic } from "../../../providers/MusicProvider";
+import { IMusicians, ITrack } from "../../../Interfaces/Tracks";
+import { IOperationResult } from "../../../Interfaces/OperationResult";
 import axios from "axios";
-import { API_URL } from "../../../../providers/api";
-import { IOperationResult } from "../../../../Interfaces/OperationResult";
-import { IMusicians, ITrack } from "../../../../Interfaces/Tracks";
-import { useAuth } from "../../../../providers/AuthProvider";
-import { useNavigation } from "@react-navigation/native";
-import MusicianPage from "../../musicians/MusicianPage";
+import { API_URL } from "../../../providers/api";
+import { Entypo } from "@expo/vector-icons";
 import { truncate } from "lodash";
-const MyTracks: FC = () => {
+import { Modalize } from "react-native-modalize";
+import { Ionicons } from "@expo/vector-icons";
+interface IMusicianPage {
+  // route: RouteProp<TypeRootStackParamList, "MusicianPage">;
+  // navigation: NavigationProp<TypeRootStackParamList, "MusicianPage">;
+  // route: RouteProp<TypeRootStackParamList, "MusicianPage">;
+  navigation: MusicianPageScreenNavigationProp;
+  route: MusicianPageScreenRouteProp;
+}
+
+type MusicianPageScreenNavigationProp = StackNavigationProp<
+  TypeRootStackParamList,
+  "MusicianPage"
+>;
+
+type MusicianPageScreenRouteProp = RouteProp<
+  TypeRootStackParamList,
+  "MusicianPage"
+>;
+
+const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
+  // const navigation = useNavigation();
   const {
+    songsNow,
+    indexNow,
+    setInfinityTracksStatus,
     playSound,
+    infinityTracksStatus,
     playingStatus,
     key,
-    setInfinityTracksStatus,
-    infinityTracksStatus,
-    songsNow,
-    ListenTrack,
-    indexNow,
   } = useMusic();
-  const navigation = useNavigation();
-  const ModalizeTrackRef = useRef<any>(null);
-  const { user, getToken, token } = useAuth();
+  const [musicianId, setMusicianId] = useState<number>();
+  const [musician, setMusician] = useState<IMusicians>();
   const [tracks, setTracks] = useState<ITrack[]>();
   const [modalizeItem, setModalizeItem] = useState<ITrack>();
-
-  const handlePress = async (itemData: ITrack) => {
-    await setModalizeItem(itemData);
-    await ModalizeTrackRef.current?.open();
-    // console.log(modalizeItem);
-  };
-
-  const getAllTracks = async () => {
+  const ModalizeTrackRef = useRef<any>(null);
+  const GetMusician = async () => {
     try {
       console.log("НАЧАЛО МЕТОДА");
 
-      const { data } = await axios.get<IOperationResult<ITrack[]>>(
-        `${API_URL}/Tracks/get-all-added-tracks-person/${user?.id}`,
-        {
-          headers: {
-            Authorization: `bearer ${token}`,
-          },
-        }
+      const { data } = await axios.get<IOperationResult<IMusicians>>(
+        `${API_URL}/Tracks/get-musician-by-id?musicianId=${route?.params?.id}`
       );
-
       if (data.success) {
-        setTracks(data.result);
+        setMusician(data.result);
         return true;
       }
       console.log(data);
@@ -69,21 +74,15 @@ const MyTracks: FC = () => {
     }
   };
 
-  const DeleteTrackToPerson = async (trackId: number) => {
+  const GetTracksByMusicianId = async () => {
     try {
       console.log("НАЧАЛО МЕТОДА");
 
-      const { data } = await axios.delete<IOperationResult<any>>(
-        `${API_URL}/Tracks/delete-track-to-person?personId=${user?.id}&trackId=${trackId}`,
-        {
-          headers: {
-            Authorization: `bearer ${token}`,
-          },
-        }
+      const { data } = await axios.get<IOperationResult<ITrack[]>>(
+        `${API_URL}/Tracks/get-all-tracks-to-musician/${route?.params?.id}`
       );
-
       if (data.success) {
-        alert("ok");
+        setTracks(data.result);
         return true;
       }
       console.log(data);
@@ -97,20 +96,66 @@ const MyTracks: FC = () => {
   const playMyTracks = async (index: number) => {
     await setInfinityTracksStatus(false);
     console.log("infinityTracksStatus", infinityTracksStatus);
+
     await playSound(tracks, index);
   };
 
-  const deleteHandler = async (trackId: number) => {
-    await DeleteTrackToPerson(trackId);
-    getAllTracks();
+  const handlePress = async (itemData: ITrack) => {
+    await setModalizeItem(itemData);
+    await ModalizeTrackRef.current?.open();
+    // console.log(modalizeItem);
   };
 
   useEffect(() => {
-    getAllTracks();
+    GetMusician();
+    GetTracksByMusicianId();
   }, []);
+
+  console.log(route.params.nickname);
 
   return (
     <View style={styles.container}>
+      {/* <Text style={{ color: "black" }}>{route.params.id}</Text>
+      {songsNow?.[indexNow].musicians?.map((musician) => (
+        <TouchableOpacity
+          onPress={() => navigation.push("MusicianPage", { ...musician })}
+        >
+          <Text>{musician.nickname} </Text>
+        </TouchableOpacity>
+      ))} */}
+
+      <ImageBackground
+        source={{
+          uri: `data:image/jpeg;base64,${musician?.musicianCover}`,
+        }}
+        style={{
+          width: "100%",
+          height: 200,
+          justifyContent: "flex-end",
+        }}
+        imageStyle={{}}
+      >
+        <Text
+          style={{
+            color: "white",
+            alignSelf: "flex-start",
+            fontSize: "26",
+            marginLeft: 10,
+          }}
+        >
+          {musician?.nickname}
+        </Text>
+        <Text
+          style={{
+            color: "white",
+            alignSelf: "flex-start",
+            fontSize: "18",
+            marginLeft: 10,
+          }}
+        >
+          Monthly Listeners: {musician?.monthlyListeners}
+        </Text>
+      </ImageBackground>
       {tracks ? (
         <View>
           {tracks?.map((item, index) => (
@@ -130,11 +175,10 @@ const MyTracks: FC = () => {
                           style={{ width: 50, height: 50 }}
                           imageStyle={{ borderRadius: 6 }}
                         >
-                          {/* indexNow === index */}
                           {key === tracks[index].url &&
                           playingStatus === "playing" ? (
                             <Image
-                              source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                              source={require("../../../assets/Equalizer/gif-animation.gif")}
                               style={{
                                 width: 30,
                                 height: 30,
@@ -149,14 +193,14 @@ const MyTracks: FC = () => {
                         </ImageBackground>
                       ) : (
                         <ImageBackground
-                          source={require("../../../../assets/image/Anemone.jpg")}
+                          source={require("../../../assets/image/Anemone.jpg")}
                           style={{ width: 50, height: 50 }}
                           imageStyle={{ borderRadius: 6 }}
                         >
                           {key === tracks[index].url &&
                           playingStatus === "playing" ? (
                             <Image
-                              source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                              source={require("../../../assets/Equalizer/gif-animation.gif")}
                               style={{
                                 width: 30,
                                 height: 30,
@@ -186,12 +230,7 @@ const MyTracks: FC = () => {
                         style={{ flexDirection: "row", flexWrap: "nowrap" }}
                       >
                         <Text style={{ color: "grey" }}>
-                          {truncate(
-                            item?.musicians
-                              ?.map((musician: IMusicians) => musician.nickname)
-                              .join(" "),
-                            { length: 20, separator: " " }
-                          )}
+                          {item.auditionsCount}
                         </Text>
                       </View>
                     </View>
@@ -209,99 +248,70 @@ const MyTracks: FC = () => {
               </View>
             </View>
           ))}
+          <Modalize
+            snapPoint={150}
+            ref={ModalizeTrackRef}
+            // scrollViewProps={{ scrollEnabled: false }}
+            // panGestureEnabled={false}
+          >
+            <View style={styles.ModalContainer}>
+              <View style={styles.ModalContent}>
+                <View
+                  style={{
+                    borderBottomWidth: 0.3,
+                    borderBottomColor: "#1b1b1b",
+                    width: "100%",
+                    alignItems: "center",
+                    flexDirection: "row",
+                  }}
+                >
+                  <Image
+                    source={require("../../../assets/image/Anemone.jpg")}
+                    style={{
+                      width: 80,
+                      height: 80,
+                      borderRadius: 5,
+                      marginTop: 10,
+                      marginLeft: 20,
+                      marginBottom: 10,
+                    }}
+                  />
+                  <Text style={{ color: "white", marginLeft: 20 }}>
+                    {modalizeItem?.title}{" "}
+                  </Text>
+                </View>
+
+                {modalizeItem?.musicians?.map((musician: IMusicians) => (
+                  <TouchableOpacity
+                    style={styles.ModalBlock}
+                    onPress={() =>
+                      navigation.push("MusicianPage", { ...musician })
+                    }
+                  >
+                    <Text style={{ color: "white" }}>
+                      {musician.nickname}&nbsp;
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+          </Modalize>
         </View>
       ) : (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text style={{ color: "white", fontSize: 20 }}>
-            У вас пока нет треков
-          </Text>
-          <TouchableOpacity onPress={getAllTracks}>
-            <Ionicons name="reload" size={40} color="white" />
-          </TouchableOpacity>
+          <Text style={{ color: "white", fontSize: 20 }}>Загрузка...</Text>
         </View>
       )}
-      <Modalize
-        snapPoint={400}
-        ref={ModalizeTrackRef}
-        // scrollViewProps={{ scrollEnabled: false }}
-        panGestureEnabled={false}
-      >
-        <View style={styles.ModalContainer}>
-          <View style={styles.ModalContent}>
-            <View
-              style={{
-                borderBottomWidth: 0.3,
-                borderBottomColor: "#1b1b1b",
-                width: "100%",
-                alignItems: "center",
-                flexDirection: "row",
-              }}
-            >
-              <Image
-                source={require("../../../../assets/image/Anemone.jpg")}
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 5,
-                  marginTop: 10,
-                  marginLeft: 20,
-                  marginBottom: 10,
-                }}
-              />
-              <Text style={{ color: "white", marginLeft: 20 }}>
-                {modalizeItem?.title}{" "}
-              </Text>
-            </View>
-            <View style={styles.ModalBlock}>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                onPress={() => deleteHandler(modalizeItem!.id)}
-              >
-                <Ionicons name="trash-outline" size={30} color="red" />
-
-                <Text
-                  style={{
-                    color: "white",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  Удалить аудиозапись
-                </Text>
-              </TouchableOpacity>
-            </View>
-
-            {modalizeItem?.musicians?.map((musician: IMusicians) => (
-              <TouchableOpacity
-                style={styles.ModalBlock}
-                onPress={() =>
-                  navigation.navigate("MusicianPage", { ...musician })
-                }
-              >
-                <Text style={{ color: "white" }}>
-                  {musician.nickname}&nbsp;
-                </Text>
-              </TouchableOpacity>
-            ))}
-          </View>
-        </View>
-      </Modalize>
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height,
-    backgroundColor: "black",
-    opacity: 0.93,
+    backgroundColor: "#0f0f0f",
     flex: 1,
   },
   trackContainer: {
@@ -343,5 +353,4 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
 });
-
-export default MyTracks;
+export default MusicianPage;

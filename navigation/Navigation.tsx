@@ -1,7 +1,11 @@
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { View, Text } from "react-native";
 import React, { FC } from "react";
-import { NavigationContainer, TabActions } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  TabActions,
+  useNavigationContainerRef,
+} from "@react-navigation/native";
 import MusicPlayer from "../components/screens/musicPlayer/MusicPlayer";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import Home from "../components/screens/home/Home";
@@ -14,15 +18,39 @@ import PlayerMenuBottom from "../components/screens/musicPlayer/PlayerMenuBottom
 import MyTracks from "../components/screens/library/myTracks/MyTracks";
 import { useAuth } from "../providers/AuthProvider";
 import Auth from "../components/screens/Auth/Auth";
+import MusicianPage from "../components/screens/musicians/MusicianPage";
+import PlayerModal from "../components/screens/musicPlayer/PlayerModal";
+import MiniPlayer from "../components/screens/musicPlayer/MiniPlayer";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
-
 const LibraryStack = () => {
   return (
     <Stack.Navigator>
       <Stack.Screen name="Library" component={Library}></Stack.Screen>
       <Stack.Screen name="MyTracks" component={MyTracks}></Stack.Screen>
+      <Stack.Screen
+        name="MusicianPage"
+        component={MusicianPage}
+        options={{ title: "Музыкант" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="PlayerMenuBottom"
+        component={PlayerMenuBottom}
+      ></Stack.Screen>
+    </Stack.Navigator>
+  );
+};
+
+const SearchStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen name="Search" component={Search}></Stack.Screen>
+      <Stack.Screen
+        name="MusicianPage"
+        component={MusicianPage}
+        options={{ title: "Музыкант" }}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -60,11 +88,12 @@ const Navigation: FC = () => {
           />
           <Tab.Screen
             name="Search"
-            component={Search}
+            component={SearchStack}
             options={{
               tabBarIcon: ({ color, size }) => (
                 <AntDesign name="search1" color={color} size={30} />
               ),
+              headerShown: false,
             }}
           />
           <Tab.Screen

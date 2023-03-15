@@ -1,8 +1,13 @@
+import { IMusicians, ITrack } from "./Tracks";
+
 export interface IAlbum {
-  title: string;
-  artist: string;
-  atwork: string;
-  url: string;
-  status: "Новинки" | "Редакция";
   id: number;
+  albumTitle: string;
+  status: string;
+  genreId: number;
+  genreTitle: string;
+  auditionsCount: number;
+  cover: string;
+  musicians: IMusicians[];
+  tracks: ITrack[];
 }

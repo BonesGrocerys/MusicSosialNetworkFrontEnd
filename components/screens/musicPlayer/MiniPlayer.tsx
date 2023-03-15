@@ -13,7 +13,6 @@ import { IMusicians } from "../../../Interfaces/Tracks";
 
 const MiniPlayer: FC = () => {
   const {
-    songs,
     setActiveMiniPlayer,
     sound,
     playSound,
@@ -146,7 +145,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     position: "absolute",
     bottom: 64,
-    height: 70,
+    height: 60,
     zIndex: 1,
     backgroundColor: "#101010",
   },

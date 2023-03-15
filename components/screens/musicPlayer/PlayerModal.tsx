@@ -5,14 +5,13 @@ import MiniPlayer from "./MiniPlayer";
 import { Modalize } from "react-native-modalize";
 import MusicPlayer from "./MusicPlayer";
 import { useMusic } from "../../../providers/MusicProvider";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
+import { TypeRootStackParamList } from "../../../navigation/types";
 
-interface IPlayerModal {
-  playbackState: any;
-  togglePlayback: any;
-  onIsOpen: any;
-}
-
-const PlayerModal: FC = () => {
+type PlayerModalProps = {
+  navigation: NavigationProp<TypeRootStackParamList>;
+};
+const PlayerModal: FC<PlayerModalProps> = ({ navigation }) => {
   const { ModalizeRef } = useMusic();
 
   return (
@@ -20,7 +19,7 @@ const PlayerModal: FC = () => {
       <MiniPlayer />
 
       <Modalize ref={ModalizeRef} scrollViewProps={{ scrollEnabled: false }}>
-        <MusicPlayer />
+        <MusicPlayer navigation={navigation} />
       </Modalize>
     </View>
   );

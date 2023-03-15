@@ -18,10 +18,12 @@ import { IMusicians } from "../Interfaces/Tracks";
 import axios from "axios";
 import { API_URL } from "./api";
 import { IOperationResult } from "../Interfaces/OperationResult";
+import { useNavigation } from "@react-navigation/native";
+import { useAuth } from "./AuthProvider";
+
 interface IContext {
   activeMiniPlayer: boolean;
   setActiveMiniPlayer: Dispatch<SetStateAction<boolean>>;
-  songs: ITrack[];
   albums: IAlbum[];
   sound: any;
   setSound: any;
@@ -30,7 +32,6 @@ interface IContext {
   stopPlaying: any;
   duration: any;
   PlayPause: any;
-  // onOpen: any;
   ModalizeRef: any;
   NextTrack: any;
   trackPlayNow: any;
@@ -64,13 +65,14 @@ interface IContext {
   getAllTracksHome: () => void;
   tracksHome: ITrack[] | undefined;
   key: string;
-  currentPlaylist: ITrack[];
+  currentPlaylist: ITrack[] | undefined;
   infinityTracksStatus: boolean;
   getRandomTrack: any;
   infinityTracks: any;
   setKey: any;
   setInfinityTracks: any;
   setInfinityTracksStatus: React.Dispatch<React.SetStateAction<boolean>>;
+  ListenTrack: any;
 }
 
 type Props = { children: ReactNode };
@@ -85,7 +87,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const [fullDuration, setFullDuration] = useState<any>();
   const [playbackPositionNow, setPlaybackPositionNow] = useState<any>();
   const [key, setKey] = useState<any>("null");
-  const ModalizeRef = useRef(null);
+  const ModalizeRef = useRef<any>(null);
   const [trackPlayNow, setTrackPlayNow] = useState<any>();
   const [songsNow, setSongsNow] = useState<ITrack | null>();
   const [indexNow, setIndexNow] = useState<number | null>();
@@ -96,7 +98,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const [infinityTracksStatus, setInfinityTracksStatus] =
     useState<boolean>(false);
   const [infinityTracks, setInfinityTracks] = useState<any>();
-
   const calculateSeekBar = (
     playbackPosition: number,
     playbackDuration: number
@@ -105,6 +106,32 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       return playbackPosition / playbackDuration;
     }
     return 0;
+  };
+
+  const { user } = useAuth();
+
+  const ListenTrack = async (item: ITrack, index: number) => {
+    try {
+      console.log("ПРОСЛУШИВАНИЕ ТРЕКА");
+      console.log("ТРЕК", item?.[index]?.id);
+      console.log("ПОЛЬЗОВАТЕЛЬ", user?.id);
+      const { data } = await axios
+        .post(
+          `${API_URL}/Tracks/listen-track?trackId=${item?.[index]?.id}&personId=${user?.id}`
+        )
+        .then((x) => {
+          console.log(x);
+          return x;
+        });
+      console.log("Успешно");
+      console.log(data);
+      // console.log(token);
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+      // console.log(`Bearer ${token}`);
+    } finally {
+    }
   };
 
   async function OnPlaybackStatusUpdate(playbackStatus: any) {
@@ -183,7 +210,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setSound(sound);
       setPlayingStatus("playing");
       console.log("Playing Sound");
-
+      ListenTrack(item, index);
       return sound.setOnPlaybackStatusUpdate(OnPlaybackStatusUpdate);
     } else {
       ModalizeRef.current?.open();
@@ -284,100 +311,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     }
   };
 
-  const albums: IAlbum[] = [
-    {
-      artist: "Shacys",
-      atwork: "test",
-      title: "testtimtle",
-      id: 1,
-      status: "Новинки",
-      url: "url",
-    },
-    {
-      artist: "Shacys",
-      atwork: "test",
-      title: "testtimtle",
-      id: 2,
-      status: "Новинки",
-      url: "url",
-    },
-    {
-      artist: "Shacys",
-      atwork: "test",
-      title: "testtimtle",
-      id: 3,
-      status: "Редакция",
-      url: "url",
-    },
-    {
-      artist: "Shacys",
-      atwork: "test",
-      title: "testtimtle",
-      id: 4,
-      status: "Редакция",
-      url: "url",
-    },
-    {
-      artist: "Shacys",
-      atwork: "test",
-      title: "testtimtle",
-      id: 5,
-      status: "Новинки",
-      url: "url",
-    },
-  ];
-
-  ///////////////////////////////////////////////
-  // Запрос всех треков
-  ///////////////////////////////////////////////
-
-  // const [tracks, setTracks] = useState<ITrack[]>();
-
-  // const getAllTracks = async () => {
-  //   try {
-  //     console.log("НАЧАЛО МЕТОДА");
-
-  //     const { data } = await axios
-  //       .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-tracks`)
-  //       .then((x) => {
-  //         console.log(x);
-  //         return x;
-  //       });
-  //     setTracks(data.result);
-  //     console.log(data);
-  //   } catch (e) {
-  //     console.log("ОШИБКА");
-  //     console.log(e);
-  //   } finally {
-  //   }
-  // };
-
-  ///////////////////////////////////////////////
-  // Запрос моих треков для Home
-  ///////////////////////////////////////////////
-  // const [tracksHome, setTracksHome] = useState<any>();
-
-  // const getAllTracksHome = async () => {
-  //   try {
-  //     console.log("НАЧАЛО МЕТОДА");
-
-  //     const { data } = await axios
-  //       .get<IOperationResult<ITrack[]>>(
-  //         `${API_URL}/Tracks/get-all-added-tracks-person/1`
-  //       )
-  //       .then((x) => {
-  //         console.log(x);
-  //         return x;
-  //       });
-  //     setTracks(data.result);
-  //     console.log(data);
-  //   } catch (e) {
-  //     console.log("ОШИБКА");
-  //     console.log(e);
-  //   } finally {
-  //   }
-  // };
-
   const getRandomTrack = async () => {
     try {
       // console.log("GET RANDOM TRACKS//////////////");
@@ -404,50 +337,10 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     }
   };
 
-  const [test, setTest] = useState<any>();
-  const getTracks = async () => {
-    try {
-      console.log("НАЧАЛО МЕТОДА");
-
-      const { data } = await axios
-
-        .get<any>(`${API_URL}/Tracks/get-track-file/2.mp3`)
-
-        .then((x) => {
-          console.log(x);
-          return x;
-        });
-      setTest(data);
-      console.log(data);
-    } catch (e) {
-      console.log("ОШИБКА");
-      console.log(e);
-    } finally {
-    }
-  };
-
-  const songs: ITrack[] = [
-    {
-      id: 1,
-      title: "21:10",
-      author: "SHPACKYOU$",
-      atwork: require("../assets/image/NEMESIS_FINAL_2.jpg"),
-      url: "http://192.168.0.105:5205/api/Tracks/get-track-file/4.mp3",
-      musicians: [
-        {
-          id: 1,
-          nickname: "SHPACKYOU$",
-          email: "email@mail.ru",
-        },
-      ],
-    },
-  ];
-
   const value = useMemo(
     () => ({
       activeMiniPlayer,
       setActiveMiniPlayer,
-      songs,
       playSound,
       sound,
       setSound,
@@ -455,7 +348,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       stopPlaying,
       duration,
       PlayPause,
-      // onOpen,
       ModalizeRef,
       NextTrack,
       trackPlayNow,
@@ -465,8 +357,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setIndexNow,
       nextTrack,
       setNextTrack,
-      // itemNow,
-      // setItemNow,
       PreviousTrack,
       fullDuration,
       setFullDuration,
@@ -479,14 +369,8 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setPlaybackPositionNow,
       isLooping,
       setIsLooping,
-      albums,
-      getTracks,
-      // getAllTracks,
-      // tracks,
       calculateSeekBar,
       setDuration,
-      // getAllTracksHome,
-      // tracksHome,
       key,
       infinityTracksStatus,
       getRandomTrack,
@@ -494,11 +378,12 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setKey,
       setInfinityTracks,
       setInfinityTracksStatus,
+      currentPlaylist,
+      ListenTrack,
     }),
     [
       activeMiniPlayer,
       setActiveMiniPlayer,
-      songs,
       playSound,
       sound,
       setSound,
@@ -506,7 +391,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       stopPlaying,
       duration,
       PlayPause,
-      // onOpen,
       ModalizeRef,
       NextTrack,
       trackPlayNow,
@@ -516,8 +400,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setIndexNow,
       nextTrack,
       setNextTrack,
-      // itemNow,
-      // setItemNow,
       PreviousTrack,
       fullDuration,
       setFullDuration,
@@ -531,14 +413,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setPlaybackPositionNow,
       isLooping,
       setIsLooping,
-      albums,
-      getTracks,
-      // getAllTracks,
-      // tracks,
+      indexNow,
       calculateSeekBar,
       setDuration,
-      // getAllTracksHome,
-      // tracksHome,
       key,
       currentPlaylist,
       infinityTracksStatus,
@@ -547,15 +424,14 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setKey,
       setInfinityTracks,
       setInfinityTracksStatus,
+      ListenTrack,
     ]
   );
   return (
     <MusicContext.Provider
-      // value={value}
       value={{
         activeMiniPlayer,
         setActiveMiniPlayer,
-        songs,
         playSound,
         sound,
         setSound,
@@ -563,7 +439,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         stopPlaying,
         duration,
         PlayPause,
-        // onOpen,
         ModalizeRef,
         NextTrack,
         trackPlayNow,
@@ -573,8 +448,6 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         setIndexNow,
         nextTrack,
         setNextTrack,
-        // itemNow,
-        // setItemNow,
         PreviousTrack,
         fullDuration,
         setFullDuration,
@@ -587,22 +460,17 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         setPlaybackPositionNow,
         isLooping,
         setIsLooping,
-        albums,
-        getTracks,
-        // getAllTracks,
-        // tracks,
         calculateSeekBar,
         setDuration,
-        // getAllTracksHome,
-        // tracksHome,
         key,
-        // currentPlaylist,
         infinityTracksStatus,
         getRandomTrack,
         infinityTracks,
         setKey,
         setInfinityTracks,
         setInfinityTracksStatus,
+        currentPlaylist,
+        ListenTrack,
       }}
     >
       {children}
