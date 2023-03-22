@@ -21,22 +21,60 @@ import Auth from "../components/screens/Auth/Auth";
 import MusicianPage from "../components/screens/musicians/MusicianPage";
 import PlayerModal from "../components/screens/musicPlayer/PlayerModal";
 import MiniPlayer from "../components/screens/musicPlayer/MiniPlayer";
+import MyAlbums from "../components/album/MyAlbums";
+import MusicianAlbumPage from "../components/screens/musicians/MusicianAlbumPage";
+import AlbumPage from "../components/album/AlbumPage";
+import MusicianTracksPage from "../components/screens/musicians/MusicianTracksPage";
+import Profile from "../components/screens/library/Profile/Profile";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 const LibraryStack = () => {
   return (
     <Stack.Navigator>
-      <Stack.Screen name="Library" component={Library}></Stack.Screen>
-      <Stack.Screen name="MyTracks" component={MyTracks}></Stack.Screen>
+      <Stack.Screen
+        name="Library"
+        component={Library}
+        options={{ title: "Моя библиотека" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="MyTracks"
+        component={MyTracks}
+        options={{ title: "Мои треки" }}
+      ></Stack.Screen>
       <Stack.Screen
         name="MusicianPage"
         component={MusicianPage}
         options={{ title: "Музыкант" }}
       ></Stack.Screen>
       <Stack.Screen
+        name="MyAlbums"
+        component={MyAlbums}
+        options={{ title: "Мои альбомы" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="MusicianAlbumPage"
+        component={MusicianAlbumPage}
+        options={{ title: "Альбомы музыканта" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="AlbumPage"
+        component={AlbumPage}
+        options={{ title: "Альбом" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="MusicianTracksPage"
+        component={MusicianTracksPage}
+        options={{ title: "Треки музыканта" }}
+      ></Stack.Screen>
+      <Stack.Screen
         name="PlayerMenuBottom"
         component={PlayerMenuBottom}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="Profile"
+        component={Profile}
+        options={{ title: "Мой профиль" }}
       ></Stack.Screen>
     </Stack.Navigator>
   );

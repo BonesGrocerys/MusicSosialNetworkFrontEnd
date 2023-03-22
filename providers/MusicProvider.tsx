@@ -90,7 +90,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const ModalizeRef = useRef<any>(null);
   const [trackPlayNow, setTrackPlayNow] = useState<any>();
   const [songsNow, setSongsNow] = useState<ITrack | null>();
-  const [indexNow, setIndexNow] = useState<number | null>();
+  const [indexNow, setIndexNow] = useState<number | null | undefined>();
   const [nextTrack, setNextTrack] = useState<any>();
   const [currentPosition, setCurrentPosition] = useState<number>(0);
   const [trackIndexNow, setTrackIndexNow] = useState<any>();
@@ -199,19 +199,22 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         playsInSilentModeIOS: true,
         staysActiveInBackground: true,
       });
-
       const url = item[index].url;
+      // try {
       const { sound } = await Audio.Sound.createAsync(
         { uri: url },
         { shouldPlay: false, progressUpdateIntervalMillis: 500 }
       );
+      // } catch (err) {
+      //   console.log("Ошибка воспроизведения");
+      // }
       console.log(item[index].url);
-      await sound.playFromPositionAsync(0);
+      await sound?.playFromPositionAsync(0);
       setSound(sound);
       setPlayingStatus("playing");
       console.log("Playing Sound");
       ListenTrack(item, index);
-      return sound.setOnPlaybackStatusUpdate(OnPlaybackStatusUpdate);
+      return sound?.setOnPlaybackStatusUpdate(OnPlaybackStatusUpdate);
     } else {
       ModalizeRef.current?.open();
     }
@@ -327,7 +330,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         });
       setInfinityTracks(data.result);
       // setTracks(data.result);
-      console.log("data", infinityTracks);
+      // console.log("data", infinityTracks);
       // console.log(token);
     } catch (e) {
       console.log("ОШИБКА");

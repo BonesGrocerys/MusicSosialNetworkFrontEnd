@@ -12,6 +12,7 @@ import { useMusic } from "../../providers/MusicProvider";
 import Albums from "../Albums";
 import { IMusicians, ITrack } from "../../Interfaces/Tracks";
 import { useNavigation } from "@react-navigation/native";
+import Field from "../ui/Field";
 const Search: FC = () => {
   const statuses = ["Новинки", "Редакция"];
   const { songsNow, indexNow } = useMusic();

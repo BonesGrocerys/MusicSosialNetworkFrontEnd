@@ -4,6 +4,7 @@ export interface IPerson {
   firstname?: string;
   lastname?: string;
   middlename?: string;
+  Name: string;
 }
 
 export interface IRegistrationRequest {

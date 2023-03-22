@@ -5,6 +5,7 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
 import React, { FC, useState, useRef, useEffect } from "react";
 import { useMusic } from "../../../../providers/MusicProvider";
@@ -21,6 +22,7 @@ import { useAuth } from "../../../../providers/AuthProvider";
 import { useNavigation } from "@react-navigation/native";
 import MusicianPage from "../../musicians/MusicianPage";
 import { truncate } from "lodash";
+import Loader from "../../../ui/Loader";
 const MyTracks: FC = () => {
   const {
     playSound,
@@ -113,119 +115,122 @@ const MyTracks: FC = () => {
     <View style={styles.container}>
       {tracks ? (
         <View>
-          {tracks?.map((item, index) => (
-            <View style={styles.trackView}>
-              <View>
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => playMyTracks(index)}
-                >
-                  <View style={{ flexDirection: "row" }}>
-                    <View style={{ marginLeft: 20 }}>
-                      {item?.cover ? (
-                        <ImageBackground
-                          source={{
-                            uri: `data:image/jpeg;base64,${item?.cover}`,
-                          }}
-                          style={{ width: 50, height: 50 }}
-                          imageStyle={{ borderRadius: 6 }}
-                        >
-                          {/* indexNow === index */}
-                          {key === tracks[index].url &&
-                          playingStatus === "playing" ? (
-                            <Image
-                              source={require("../../../../assets/Equalizer/gif-animation.gif")}
-                              style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 5,
-                                marginLeft: 10,
-                                marginTop: 10,
-                              }}
-                            />
-                          ) : (
-                            <Text></Text>
-                          )}
-                        </ImageBackground>
-                      ) : (
-                        <ImageBackground
-                          source={require("../../../../assets/image/Anemone.jpg")}
-                          style={{ width: 50, height: 50 }}
-                          imageStyle={{ borderRadius: 6 }}
-                        >
-                          {key === tracks[index].url &&
-                          playingStatus === "playing" ? (
-                            <Image
-                              source={require("../../../../assets/Equalizer/gif-animation.gif")}
-                              style={{
-                                width: 30,
-                                height: 30,
-                                borderRadius: 5,
-                                marginLeft: 10,
-                                marginTop: 10,
-                              }}
-                            />
-                          ) : (
-                            <Text></Text>
-                          )}
-                        </ImageBackground>
-                      )}
-                    </View>
-                    <View
-                      style={{
-                        marginTop: 4,
-                        marginLeft: 40,
-                      }}
+          <View>
+            <ScrollView style={styles.Scroll}>
+              {tracks?.map((item, index) => (
+                <View style={styles.trackView}>
+                  <View>
+                    <TouchableOpacity
+                      key={index}
+                      onPress={() => playMyTracks(index)}
                     >
-                      <Text style={{ color: "white" }}>
-                        {item.title.length > 10
-                          ? `${item.title.substring(0, 19)}...`
-                          : item.title}
-                      </Text>
-                      <View
-                        style={{ flexDirection: "row", flexWrap: "nowrap" }}
-                      >
-                        <Text style={{ color: "grey" }}>
-                          {truncate(
-                            item?.musicians
-                              ?.map((musician: IMusicians) => musician.nickname)
-                              .join(" "),
-                            { length: 20, separator: " " }
+                      <View style={{ flexDirection: "row" }}>
+                        <View style={{ marginLeft: 20 }}>
+                          {item?.cover ? (
+                            <ImageBackground
+                              source={{
+                                uri: `data:image/jpeg;base64,${item?.cover}`,
+                              }}
+                              style={{ width: 50, height: 50 }}
+                              imageStyle={{ borderRadius: 6 }}
+                            >
+                              {/* indexNow === index */}
+                              {key === tracks[index].url &&
+                              playingStatus === "playing" ? (
+                                <Image
+                                  source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                                  style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 5,
+                                    marginLeft: 10,
+                                    marginTop: 10,
+                                  }}
+                                />
+                              ) : (
+                                <Text></Text>
+                              )}
+                            </ImageBackground>
+                          ) : (
+                            <ImageBackground
+                              source={require("../../../../assets/image/Anemone.jpg")}
+                              style={{ width: 50, height: 50 }}
+                              imageStyle={{ borderRadius: 6 }}
+                            >
+                              {key === tracks[index].url &&
+                              playingStatus === "playing" ? (
+                                <Image
+                                  source={require("../../../../assets/Equalizer/gif-animation.gif")}
+                                  style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 5,
+                                    marginLeft: 10,
+                                    marginTop: 10,
+                                  }}
+                                />
+                              ) : (
+                                <Text></Text>
+                              )}
+                            </ImageBackground>
                           )}
-                        </Text>
+                        </View>
+                        <View
+                          style={{
+                            marginTop: 4,
+                            marginLeft: 40,
+                          }}
+                        >
+                          <Text style={{ color: "white" }}>
+                            {item.title.length > 10
+                              ? `${item.title.substring(0, 19)}...`
+                              : item.title}
+                          </Text>
+                          <View
+                            style={{ flexDirection: "row", flexWrap: "nowrap" }}
+                          >
+                            <Text style={{ color: "grey" }}>
+                              {truncate(
+                                item?.musicians
+                                  ?.map(
+                                    (musician: IMusicians) => musician.nickname
+                                  )
+                                  .join(" "),
+                                { length: 20, separator: " " }
+                              )}
+                            </Text>
+                          </View>
+                        </View>
                       </View>
-                    </View>
+                    </TouchableOpacity>
                   </View>
-                </TouchableOpacity>
-              </View>
-              <View style={{ marginTop: 14, marginRight: 10 }}>
-                <TouchableOpacity onPress={() => handlePress(item)}>
-                  <Entypo
-                    name="dots-three-horizontal"
-                    size={24}
-                    color="white"
-                  />
-                </TouchableOpacity>
-              </View>
-            </View>
-          ))}
+                  <View style={{ marginTop: 14, marginRight: 10 }}>
+                    <TouchableOpacity onPress={() => handlePress(item)}>
+                      <Entypo
+                        name="dots-three-horizontal"
+                        size={24}
+                        color="white"
+                      />
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </ScrollView>
+          </View>
         </View>
       ) : (
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text style={{ color: "white", fontSize: 20 }}>
-            У вас пока нет треков
-          </Text>
-          <TouchableOpacity onPress={getAllTracks}>
-            <Ionicons name="reload" size={40} color="white" />
-          </TouchableOpacity>
+          <Text style={{ color: "white", fontSize: 20 }}>Загрузка...</Text>
+          <Loader />
         </View>
       )}
+
       <Modalize
         snapPoint={400}
         ref={ModalizeTrackRef}
-        // scrollViewProps={{ scrollEnabled: false }}
+        scrollViewProps={{ scrollEnabled: false }}
         panGestureEnabled={false}
       >
         <View style={styles.ModalContainer}>
@@ -240,7 +245,9 @@ const MyTracks: FC = () => {
               }}
             >
               <Image
-                source={require("../../../../assets/image/Anemone.jpg")}
+                source={{
+                  uri: `data:image/jpeg;base64,${modalizeItem?.cover}`,
+                }}
                 style={{
                   width: 80,
                   height: 80,
@@ -341,6 +348,9 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
+  },
+  Scroll: {
+    height: Dimensions.get("window").height,
   },
 });
 

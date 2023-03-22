@@ -1,3 +1,4 @@
+import { IAlbum } from "../Interfaces/Album";
 import { IMusicians } from "../Interfaces/Tracks";
 
 export type TypeRootStackParamList = {
@@ -10,4 +11,9 @@ export type TypeRootStackParamList = {
   PlayerModal: undefined;
   MusicPlayer: undefined;
   MusicianPage: IMusicians;
+  MyAlbums: any;
+  MusicianAlbumPage: any;
+  AlbumPage: IAlbum;
+  MusicianTracksPage: any;
+  Profile: any;
 };

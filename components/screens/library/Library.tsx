@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Dimensions,
   TouchableOpacity,
+  Image,
 } from "react-native";
 import React, { FC } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -22,22 +23,49 @@ import { useAuth } from "../../../providers/AuthProvider";
 const Library: FC = () => {
   const navigation = useNavigation();
   const { logout } = useAuth();
+  const { user } = useAuth();
   return (
     <View style={styles.mainContainer}>
+      <View
+        style={{
+          alignItems: "center",
+          borderBottomWidth: 0.3,
+          borderBottomColor: "#1b1b1b",
+          paddingBottom: 10,
+        }}
+      >
+        <TouchableOpacity
+          style={{ alignItems: "center" }}
+          onPress={() => navigation.navigate("Profile")}
+        >
+          <Image
+            style={{
+              width: 140,
+              height: 140,
+              borderRadius: 100,
+              marginTop: 10,
+            }}
+            source={require("../../../assets/image/Anemone.jpg")}
+          />
+          <Text style={{ color: "white" }}>
+            {user?.Name ? user?.Name : "Имя профиля"}
+          </Text>
+        </TouchableOpacity>
+      </View>
       <TouchableOpacity onPress={() => navigation.navigate("MyTracks")}>
         <View style={styles.container}>
           <View style={styles.text}>
             <Ionicons name="musical-notes-outline" size={24} color="grey" />
-            <Text style={styles.text}>MyTracks</Text>
+            <Text style={styles.text}>Мои треки</Text>
           </View>
           <AntDesign style={styles.icons} name="right" size={24} color="grey" />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("MyAlbums")}>
         <View style={styles.container}>
           <View style={styles.text}>
             <MaterialIcons name="album" size={24} color="grey" />
-            <Text style={styles.text}>Albums</Text>
+            <Text style={styles.text}>Мои Альбомы</Text>
           </View>
           <AntDesign style={styles.icons} name="right" size={24} color="grey" />
         </View>
@@ -50,7 +78,7 @@ const Library: FC = () => {
               size={24}
               color="grey"
             />
-            <Text style={styles.text}>Playlists</Text>
+            <Text style={styles.text}>Мои плейлисты</Text>
           </View>
           <AntDesign style={styles.icons} name="right" size={24} color="grey" />
         </View>
@@ -59,7 +87,7 @@ const Library: FC = () => {
         <View style={styles.container}>
           <View style={styles.text}>
             <FontAwesome5 name="guitar" size={24} color="grey" />
-            <Text style={styles.text}>Artists</Text>
+            <Text style={styles.text}>Артисты</Text>
           </View>
           <AntDesign style={styles.icons} name="right" size={24} color="grey" />
         </View>

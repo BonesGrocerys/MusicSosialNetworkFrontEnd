@@ -12,15 +12,28 @@ import { IOperationResult } from "../../../Interfaces/OperationResult";
 import { API_URL } from "../../../providers/api";
 import { Modalize } from "react-native-modalize";
 import axios from "axios";
-import { IMusicians } from "../../../Interfaces/Tracks";
+import { IMusicians, ITrack } from "../../../Interfaces/Tracks";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TypeRootStackParamList } from "../../../navigation/types";
+import { RouteProp } from "@react-navigation/native";
+import { StackNavigationProp } from "@react-navigation/stack";
 
-type MusicPlayerProps = {
-  navigation: NavigationProp<TypeRootStackParamList>;
-};
+// interface MusicPlayerProps {
+//   navigation: MusicPlayerScreenNavigationProp;
+//   route: MusicPlayerScreenRouteProp;
+// }
 
-const MusicPlayer: FC<MusicPlayerProps> = ({ navigation }) => {
+// type MusicPlayerScreenNavigationProp = StackNavigationProp<
+//   TypeRootStackParamList,
+//   "MusicPlayer"
+// >;
+
+// type MusicPlayerScreenRouteProp = RouteProp<
+//   TypeRootStackParamList,
+//   "MusicPlayer"
+// >;
+
+const MusicPlayer: FC = ({}) => {
   const ModalizeTrackRef = useRef<any>(null);
   // const navigation = useNavigation();
   const [currentPosition, setCurrentPosition] = useState<number>(0);
@@ -193,13 +206,13 @@ const MusicPlayer: FC<MusicPlayerProps> = ({ navigation }) => {
           </TouchableOpacity>
         </View>
       </View>
-      {songsNow?.[indexNow]?.musicians?.map((musician: IMusicians) => (
+      {/* {songsNow?.[indexNow]?.musicians?.map((musician: IMusicians) => (
         <TouchableOpacity
           onPress={() => navigation.navigate("MusicianPage", { ...musician })}
         >
           <Text style={{ color: "white" }}>{musician.nickname}</Text>
         </TouchableOpacity>
-      ))}
+      ))} */}
 
       <Modalize
         snapPoint={250}
@@ -207,10 +220,13 @@ const MusicPlayer: FC<MusicPlayerProps> = ({ navigation }) => {
         scrollViewProps={{ scrollEnabled: false }}
       >
         <View>
+          {songsNow?.map((songs: ITrack) => (
+            <Text> {songs.title} </Text>
+          ))}
           {/* {songsNow?.[indexNow].musicians?.map((musician: IMusicians) => (
             <TouchableOpacity
               onPress={() =>
-                navigation.navigate("MusicianPage", {
+                navigation.push("MusicianPage", {
                   params: { musicianId: musician.id },
                 } as any)
               }
