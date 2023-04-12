@@ -18,6 +18,12 @@ import axios, { all } from "axios";
 import { IOperationResult } from "../../Interfaces/OperationResult";
 import { API_URL } from "../../providers/api";
 import { Ionicons } from "@expo/vector-icons";
+import Tracks from "./Track/SearchTracks";
+import Loader from "../ui/Loader";
+
+// interface ISearch {
+//   allTracks: ITrack[];
+// }
 
 const Search: FC = () => {
   const navigation = useNavigation();
@@ -40,6 +46,8 @@ const Search: FC = () => {
       );
       if (data.success) {
         setAllTracks(data.result);
+        console.log(allTracks);
+
         return true;
       }
     } catch (e) {
@@ -92,16 +100,43 @@ const Search: FC = () => {
         </TouchableOpacity>
       </View>
 
-      {allTracks ? (
+      {searchText ? (
         <View>
-          {allTracks ? <Text style={{ color: "white" }}>Треки:</Text> : <></>}
-          {allTracks?.slice(0, 5).map((track) => (
-            <Text style={{ color: "white" }}> {track.title}</Text>
-          ))}
+          {allTracks ? (
+            <View>
+              {allTracks.length > 0 ? (
+                <Text style={{ color: "white" }}>Треки:</Text>
+              ) : (
+                <></>
+              )}
+              {allTracks?.slice(0, 5).map((track) => (
+                <Text style={{ color: "white" }}> {track.title}</Text>
+              ))}
+              {allTracks.length === 0 && searchText.length > 1 ? (
+                <View>
+                  <Text style={{ color: "white" }}>Не найдено</Text>
+                </View>
+              ) : (
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("SearchTracks", { searchText })
+                  }
+                >
+                  <Text style={{ color: "white" }}>Показать все треки</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+          ) : (
+            <View>
+              <Text style={{ color: "white" }}>
+                <Loader />
+              </Text>
+            </View>
+          )}
         </View>
       ) : (
         <View>
-          <Text style={{ color: "white" }}>Не найдено</Text>
+          <Text style={{ color: "white" }}>Введите запрос</Text>
         </View>
       )}
     </View>
