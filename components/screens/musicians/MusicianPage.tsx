@@ -64,7 +64,7 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
       console.log("НАЧАЛО МЕТОДА");
 
       const { data } = await axios.get<IOperationResult<IMusicians>>(
-        `${API_URL}/Tracks/get-musician-by-id?musicianId=${route?.params?.id}`
+        `${API_URL}/Musician/get-musician-by-id?musicianId=${route?.params?.id}`
       );
       if (data.success) {
         setMusician(data.result);

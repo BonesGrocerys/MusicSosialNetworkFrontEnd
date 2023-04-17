@@ -95,6 +95,21 @@ const SearchStack = () => {
         component={SearchTracks}
         options={{ title: "Треки по запросу" }}
       ></Stack.Screen>
+      <Stack.Screen
+        name="MusicianAlbumPage"
+        component={MusicianAlbumPage}
+        options={{ title: "Альбомы музыканта" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="AlbumPage"
+        component={AlbumPage}
+        options={{ title: "Альбом" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="MusicianTracksPage"
+        component={MusicianTracksPage}
+        options={{ title: "Треки музыканта" }}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };
