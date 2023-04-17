@@ -91,7 +91,7 @@ const MusicPlayer: FC = ({}) => {
     <View style={styles.container}>
       <View>
         <Image
-          style={{ width: 320, height: 320, marginTop: 15 }}
+          style={{ width: 320, height: 320, marginTop: 15, borderRadius: 15 }}
           source={{
             uri: `data:image/png;base64,${songsNow?.[indexNow]?.cover}`,
           }}

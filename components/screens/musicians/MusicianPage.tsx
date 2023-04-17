@@ -32,15 +32,12 @@ interface IMusicianPage {
   route: MusicianPageScreenRouteProp;
 }
 
-type MusicianPageScreenNavigationProp = StackNavigationProp<
-  TypeRootStackParamList,
-  "MusicianPage"
->;
+type MusicianPageScreenNavigationProp =
+  StackNavigationProp<TypeRootStackParamList>;
+("MusicianPage");
 
-type MusicianPageScreenRouteProp = RouteProp<
-  TypeRootStackParamList,
-  "MusicianPage"
->;
+type MusicianPageScreenRouteProp = RouteProp<TypeRootStackParamList>;
+("MusicianPage");
 
 const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
   // const navigation = useNavigation();
@@ -136,7 +133,7 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
     GetAlbumsToMusicianId();
   }, []);
 
-  console.log(route.params.nickname);
+  console.log(route?.params?.nickname);
 
   return (
     <View style={styles.container}>

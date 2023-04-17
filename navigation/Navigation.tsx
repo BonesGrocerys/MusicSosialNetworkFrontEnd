@@ -27,6 +27,8 @@ import AlbumPage from "../components/album/AlbumPage";
 import MusicianTracksPage from "../components/screens/musicians/MusicianTracksPage";
 import Profile from "../components/screens/library/Profile/Profile";
 import SearchTracks from "../components/screens/Track/SearchTracks";
+import SearchMusician from "../components/screens/musicians/SearchMusician";
+import SearchAlbum from "../components/album/SearchAlbum";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -109,6 +111,16 @@ const SearchStack = () => {
         name="MusicianTracksPage"
         component={MusicianTracksPage}
         options={{ title: "Треки музыканта" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="SearchMusician"
+        component={SearchMusician}
+        options={{ title: "Музыканты по запросу" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="SearchAlbum"
+        component={SearchAlbum}
+        options={{ title: "Альбомы по запросу" }}
       ></Stack.Screen>
     </Stack.Navigator>
   );

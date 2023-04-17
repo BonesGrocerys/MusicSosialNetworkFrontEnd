@@ -25,20 +25,16 @@ import { RouteProp } from "@react-navigation/native";
 import { StackNavigationProp } from "@react-navigation/stack";
 import { TypeRootStackParamList } from "../../navigation/types";
 import { truncate } from "lodash";
+import SearchContentMusician from "./SearchContent/SearchContentMusician";
+import SearchContentAlbum from "./SearchContent/SearchContentAlbum";
 interface ISearch {
-  // route: RouteProp<TypeRootStackParamList, "MusicianPage">;
-  // navigation: NavigationProp<TypeRootStackParamList, "MusicianPage">;
-  // route: RouteProp<TypeRootStackParamList, "MusicianPage">;
   navigation: SearchScreenNavigationProp;
   route: SearchScreenRouteProp;
 }
 
-type SearchScreenNavigationProp = StackNavigationProp<
-  TypeRootStackParamList,
-  "MusicianPage"
->;
+type SearchScreenNavigationProp = StackNavigationProp<TypeRootStackParamList>;
 
-type SearchScreenRouteProp = RouteProp<TypeRootStackParamList, "MusicianPage">;
+type SearchScreenRouteProp = RouteProp<TypeRootStackParamList>;
 
 const Search: FC<ISearch> = ({ navigation }) => {
   // const navigation = useNavigation();
@@ -169,7 +165,7 @@ const Search: FC<ISearch> = ({ navigation }) => {
         <Field
           onChange={(value) => setSearchText(value)}
           value={searchText}
-          placeholder="Поиск..."
+          placeholder="Введите запрос..."
           style={{ width: "80%" }}
           isSearch
         />
@@ -182,18 +178,13 @@ const Search: FC<ISearch> = ({ navigation }) => {
         {searchText ? (
           <View>
             <View>
-              {allMusician ? (
-                <View>
-                  {allMusician.map((musician) => (
-                    <Text style={{ color: "white" }}>{musician.nickname}</Text>
-                  ))}
-                </View>
-              ) : (
-                <View></View>
-              )}
+              <SearchContentMusician
+                allMusician={allMusician}
+                searchText={searchText}
+              />
 
               {allTracks ? (
-                <View>
+                <View style={{ marginTop: 20 }}>
                   {allTracks.length > 0 ? (
                     <View
                       style={{
@@ -202,20 +193,24 @@ const Search: FC<ISearch> = ({ navigation }) => {
                       }}
                     >
                       <Text style={{ color: "white", marginLeft: 20 }}>
-                        Треки
+                        Треки:
                       </Text>
-                      <TouchableOpacity
-                        onPress={() =>
-                          navigation.navigate("SearchTracks", { searchText })
-                        }
-                      >
-                        <Text style={{ color: "white", marginRight: 20 }}>
-                          Показать все треки &ensp;
-                          <Text style={{ color: "yellow" }}>
-                            {allTracks.length}
+                      {allTracks.length > 4 ? (
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate("SearchTracks", { searchText })
+                          }
+                        >
+                          <Text style={{ color: "white", marginRight: 20 }}>
+                            Показать все треки &ensp;
+                            <Text style={{ color: "yellow" }}>
+                              {allTracks.length}
+                            </Text>
                           </Text>
-                        </Text>
-                      </TouchableOpacity>
+                        </TouchableOpacity>
+                      ) : (
+                        <></>
+                      )}
                     </View>
                   ) : (
                     <></>
@@ -333,41 +328,17 @@ const Search: FC<ISearch> = ({ navigation }) => {
                   )}
                 </View>
               ) : (
-                <View>
-                  <Text style={{ color: "white" }}>
-                    <Loader />
-                  </Text>
-                </View>
+                <Loader />
               )}
-              {allAlbums ? (
-                <View style={styles.AlbumsContainer}>
-                  {allAlbums?.slice(0, 2).map((album: IAlbum, index) => (
-                    <TouchableOpacity
-                      style={{ marginTop: 5 }}
-                      onPress={() =>
-                        navigation.navigate("AlbumPage", { ...album })
-                      }
-                    >
-                      <Image
-                        source={{
-                          uri: `data:image/jpeg;base64,${album?.cover}`,
-                        }}
-                        style={{ width: 150, height: 150 }}
-                      />
-                      <Text style={{ color: "white" }}>
-                        {album?.albumTitle}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              ) : (
-                <View></View>
-              )}
+              <SearchContentAlbum
+                allAlbums={allAlbums}
+                searchText={searchText}
+              />
             </View>
           </View>
         ) : (
           <View>
-            <Text style={{ color: "white" }}>Введите запрос</Text>
+            <></>
           </View>
         )}
       </ScrollView>
@@ -427,13 +398,6 @@ const styles = StyleSheet.create({
     backgroundColor: "black",
     opacity: 0.93,
     flex: 1,
-  },
-  AlbumsContainer: {
-    width: Dimensions.get("window").width,
-    justifyContent: "space-around",
-    flexDirection: "row",
-    flexWrap: "wrap",
-    marginTop: 10,
   },
   trackView: {
     width: Dimensions.get("window").width,

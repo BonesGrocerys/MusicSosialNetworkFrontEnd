@@ -216,7 +216,7 @@ const SearchTracks: FC<ISearchTracks> = ({ route }) => {
                 }}
               />
               <Text style={{ color: "white", marginLeft: 20 }}>
-                {modalizeItem?.title}{" "}
+                {modalizeItem?.title}
               </Text>
             </View>
             <View style={styles.ModalBlock}>
