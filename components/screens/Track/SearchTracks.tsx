@@ -25,6 +25,7 @@ import { IOperationResult } from "../../../Interfaces/OperationResult";
 import { useMusic } from "../../../providers/MusicProvider";
 import { TypeRootStackParamList } from "../../../navigation/types";
 import { RouteProp } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
 
 interface ISearchTracks {
   route: RouteProp<TypeRootStackParamList, "SearchTracks">;
@@ -41,10 +42,15 @@ const SearchTracks: FC<ISearchTracks> = ({ route }) => {
     key,
     setInfinityTracksStatus,
     infinityTracksStatus,
+    AddTrackToPersonPages,
+    trackIsAdded,
+    DeleteTrackFromPerson,
+    TrackIsAddedPages,
   } = useMusic();
 
   const handlePress = async (itemData: ITrack) => {
     await setModalizeItem(itemData);
+    await TrackIsAddedPages(itemData);
     await ModalizeTrackRef.current?.open();
   };
 
@@ -186,7 +192,7 @@ const SearchTracks: FC<ISearchTracks> = ({ route }) => {
       </View>
 
       <Modalize
-        snapPoint={400}
+        snapPoint={350}
         ref={ModalizeTrackRef}
         scrollViewProps={{ scrollEnabled: false }}
         panGestureEnabled={false}
@@ -219,29 +225,6 @@ const SearchTracks: FC<ISearchTracks> = ({ route }) => {
                 {modalizeItem?.title}
               </Text>
             </View>
-            <View style={styles.ModalBlock}>
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                // onPress={() => deleteHandler(modalizeItem!.id)}
-              >
-                <Ionicons name="trash-outline" size={30} color="red" />
-
-                <Text
-                  style={{
-                    color: "white",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  Удалить аудиозапись
-                </Text>
-              </TouchableOpacity>
-            </View>
-
             {modalizeItem?.musicians?.map((musician: IMusicians) => (
               <TouchableOpacity
                 style={styles.ModalBlock}
@@ -254,6 +237,51 @@ const SearchTracks: FC<ISearchTracks> = ({ route }) => {
                 </Text>
               </TouchableOpacity>
             ))}
+            {trackIsAdded === true ? (
+              <View style={styles.ModalBlock}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                  onPress={() => DeleteTrackFromPerson(modalizeItem)}
+                >
+                  <Ionicons name="trash-outline" size={30} color="red" />
+
+                  <Text
+                    style={{
+                      color: "white",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    Удалить аудиозапись
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+                onPress={() => AddTrackToPersonPages(modalizeItem)}
+              >
+                <AntDesign name="plus" size={30} color="#00b3ff" />
+
+                <Text
+                  style={{
+                    color: "white",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  Добавить аудиозапись
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </Modalize>

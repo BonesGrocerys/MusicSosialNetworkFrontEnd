@@ -31,7 +31,6 @@ const Home: FC = () => {
   const PlayInfinityTracks = async () => {
     setInfinityTracksStatus(true);
     await getRandomTrack(), await playSound(infinityTracks, 0);
-    console.log("INFINITY TRACKS", infinityTracks);
   };
 
   useEffect(() => {

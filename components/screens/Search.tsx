@@ -27,6 +27,7 @@ import { TypeRootStackParamList } from "../../navigation/types";
 import { truncate } from "lodash";
 import SearchContentMusician from "./SearchContent/SearchContentMusician";
 import SearchContentAlbum from "./SearchContent/SearchContentAlbum";
+import { AntDesign } from "@expo/vector-icons";
 interface ISearch {
   navigation: SearchScreenNavigationProp;
   route: SearchScreenRouteProp;
@@ -52,17 +53,21 @@ const Search: FC<ISearch> = ({ navigation }) => {
     infinityTracksStatus,
     playingStatus,
     key,
+    DeleteTrackFromPerson,
+    trackIsAdded,
+    TrackIsAddedPages,
+    AddTrackToPersonPages,
   } = useMusic();
 
   const playMyTracks = async (index: number) => {
     await setInfinityTracksStatus(false);
     console.log("infinityTracksStatus", infinityTracksStatus);
-
     await playSound(allTracks, index);
   };
 
   const handlePress = async (itemData: ITrack) => {
-    await setModalizeItem(itemData);
+    await TrackIsAddedPages(itemData);
+    await await setModalizeItem(itemData);
     await ModalizeTrackRef.current?.open();
   };
   const GetAllMusician = async (searchText?: string) => {
@@ -174,175 +179,181 @@ const Search: FC<ISearch> = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      <ScrollView>
-        {searchText ? (
-          <View>
+      {allAlbums && allTracks && allMusician ? (
+        <ScrollView>
+          {searchText ? (
             <View>
-              <SearchContentMusician
-                allMusician={allMusician}
-                searchText={searchText}
-              />
+              <View>
+                <SearchContentMusician
+                  allMusician={allMusician}
+                  searchText={searchText}
+                />
 
-              {allTracks ? (
-                <View style={{ marginTop: 20 }}>
-                  {allTracks.length > 0 ? (
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        justifyContent: "space-between",
-                      }}
-                    >
-                      <Text style={{ color: "white", marginLeft: 20 }}>
-                        Треки:
-                      </Text>
-                      {allTracks.length > 4 ? (
-                        <TouchableOpacity
-                          onPress={() =>
-                            navigation.navigate("SearchTracks", { searchText })
-                          }
-                        >
-                          <Text style={{ color: "white", marginRight: 20 }}>
-                            Показать все треки &ensp;
-                            <Text style={{ color: "yellow" }}>
-                              {allTracks.length}
-                            </Text>
-                          </Text>
-                        </TouchableOpacity>
-                      ) : (
-                        <></>
-                      )}
-                    </View>
-                  ) : (
-                    <></>
-                  )}
-                  <View>
-                    {allTracks?.slice(0, 5).map((item, index) => (
-                      <View style={styles.trackView}>
-                        <View>
+                {allTracks ? (
+                  <View style={{ marginTop: 20 }}>
+                    {allTracks.length > 0 ? (
+                      <View
+                        style={{
+                          flexDirection: "row",
+                          justifyContent: "space-between",
+                        }}
+                      >
+                        <Text style={{ color: "white", marginLeft: 20 }}>
+                          Треки:
+                        </Text>
+                        {allTracks.length > 4 ? (
                           <TouchableOpacity
-                            key={index}
-                            onPress={() => playMyTracks(index)}
+                            onPress={() =>
+                              navigation.navigate("SearchTracks", {
+                                searchText,
+                              })
+                            }
                           >
-                            <View style={{ flexDirection: "row" }}>
-                              <View style={{ marginLeft: 20 }}>
-                                {item?.cover ? (
-                                  <ImageBackground
-                                    source={{
-                                      uri: `data:image/jpeg;base64,${item?.cover}`,
-                                    }}
-                                    style={{ width: 50, height: 50 }}
-                                    imageStyle={{ borderRadius: 6 }}
-                                  >
-                                    {key === allTracks[index].url &&
-                                    playingStatus === "playing" ? (
-                                      <Image
-                                        source={require("../../assets/Equalizer/gif-animation.gif")}
-                                        style={{
-                                          width: 30,
-                                          height: 30,
-                                          borderRadius: 5,
-                                          marginLeft: 10,
-                                          marginTop: 10,
-                                        }}
-                                      />
-                                    ) : (
-                                      <Text></Text>
-                                    )}
-                                  </ImageBackground>
-                                ) : (
-                                  <ImageBackground
-                                    source={require("../../assets/image/Anemone.jpg")}
-                                    style={{ width: 50, height: 50 }}
-                                    imageStyle={{ borderRadius: 6 }}
-                                  >
-                                    {key === allTracks[index].url &&
-                                    playingStatus === "playing" ? (
-                                      <Image
-                                        source={require("../../assets/Equalizer/gif-animation.gif")}
-                                        style={{
-                                          width: 30,
-                                          height: 30,
-                                          borderRadius: 5,
-                                          marginLeft: 10,
-                                          marginTop: 10,
-                                        }}
-                                      />
-                                    ) : (
-                                      <Text></Text>
-                                    )}
-                                  </ImageBackground>
-                                )}
-                              </View>
-                              <View
-                                style={{
-                                  marginTop: 4,
-                                  marginLeft: 40,
-                                }}
-                              >
-                                <Text style={{ color: "white" }}>
-                                  {item.title.length > 10
-                                    ? `${item.title.substring(0, 19)}...`
-                                    : item.title}
-                                </Text>
+                            <Text style={{ color: "white", marginRight: 20 }}>
+                              Показать все треки &ensp;
+                              <Text style={{ color: "yellow" }}>
+                                {allTracks.length}
+                              </Text>
+                            </Text>
+                          </TouchableOpacity>
+                        ) : (
+                          <></>
+                        )}
+                      </View>
+                    ) : (
+                      <></>
+                    )}
+                    <View>
+                      {allTracks?.slice(0, 5).map((item, index) => (
+                        <View style={styles.trackView}>
+                          <View>
+                            <TouchableOpacity
+                              key={index}
+                              onPress={() => playMyTracks(index)}
+                            >
+                              <View style={{ flexDirection: "row" }}>
+                                <View style={{ marginLeft: 20 }}>
+                                  {item?.cover ? (
+                                    <ImageBackground
+                                      source={{
+                                        uri: `data:image/jpeg;base64,${item?.cover}`,
+                                      }}
+                                      style={{ width: 50, height: 50 }}
+                                      imageStyle={{ borderRadius: 6 }}
+                                    >
+                                      {key === allTracks[index].url &&
+                                      playingStatus === "playing" ? (
+                                        <Image
+                                          source={require("../../assets/Equalizer/gif-animation.gif")}
+                                          style={{
+                                            width: 30,
+                                            height: 30,
+                                            borderRadius: 5,
+                                            marginLeft: 10,
+                                            marginTop: 10,
+                                          }}
+                                        />
+                                      ) : (
+                                        <Text></Text>
+                                      )}
+                                    </ImageBackground>
+                                  ) : (
+                                    <ImageBackground
+                                      source={require("../../assets/image/Anemone.jpg")}
+                                      style={{ width: 50, height: 50 }}
+                                      imageStyle={{ borderRadius: 6 }}
+                                    >
+                                      {key === allTracks[index].url &&
+                                      playingStatus === "playing" ? (
+                                        <Image
+                                          source={require("../../assets/Equalizer/gif-animation.gif")}
+                                          style={{
+                                            width: 30,
+                                            height: 30,
+                                            borderRadius: 5,
+                                            marginLeft: 10,
+                                            marginTop: 10,
+                                          }}
+                                        />
+                                      ) : (
+                                        <Text></Text>
+                                      )}
+                                    </ImageBackground>
+                                  )}
+                                </View>
                                 <View
                                   style={{
-                                    flexDirection: "row",
-                                    flexWrap: "nowrap",
+                                    marginTop: 4,
+                                    marginLeft: 40,
                                   }}
                                 >
-                                  <Text style={{ color: "grey" }}>
-                                    {truncate(
-                                      item?.musicians
-                                        ?.map(
-                                          (musician: IMusicians) =>
-                                            musician.nickname
-                                        )
-                                        .join(" "),
-                                      { length: 20, separator: " " }
-                                    )}
+                                  <Text style={{ color: "white" }}>
+                                    {item.title.length > 10
+                                      ? `${item.title.substring(0, 19)}...`
+                                      : item.title}
                                   </Text>
+                                  <View
+                                    style={{
+                                      flexDirection: "row",
+                                      flexWrap: "nowrap",
+                                    }}
+                                  >
+                                    <Text style={{ color: "grey" }}>
+                                      {truncate(
+                                        item?.musicians
+                                          ?.map(
+                                            (musician: IMusicians) =>
+                                              musician.nickname
+                                          )
+                                          .join(" "),
+                                        { length: 20, separator: " " }
+                                      )}
+                                    </Text>
+                                  </View>
                                 </View>
                               </View>
-                            </View>
-                          </TouchableOpacity>
+                            </TouchableOpacity>
+                          </View>
+                          <View style={{ marginTop: 14, marginRight: 20 }}>
+                            <TouchableOpacity onPress={() => handlePress(item)}>
+                              <Entypo
+                                name="dots-three-horizontal"
+                                size={24}
+                                color="white"
+                              />
+                            </TouchableOpacity>
+                          </View>
                         </View>
-                        <View style={{ marginTop: 14, marginRight: 20 }}>
-                          <TouchableOpacity onPress={() => handlePress(item)}>
-                            <Entypo
-                              name="dots-three-horizontal"
-                              size={24}
-                              color="white"
-                            />
-                          </TouchableOpacity>
-                        </View>
-                      </View>
-                    ))}
-                  </View>
-
-                  {allTracks.length === 0 ? (
-                    <View>
-                      <Text style={{ color: "white" }}>Треки не найдены</Text>
+                      ))}
                     </View>
-                  ) : (
-                    <></>
-                  )}
-                </View>
-              ) : (
-                <Loader />
-              )}
-              <SearchContentAlbum
-                allAlbums={allAlbums}
-                searchText={searchText}
-              />
+
+                    {allTracks.length === 0 ? (
+                      <View>
+                        <Text style={{ color: "white" }}>Треки не найдены</Text>
+                      </View>
+                    ) : (
+                      <></>
+                    )}
+                  </View>
+                ) : (
+                  <Loader />
+                )}
+                <SearchContentAlbum
+                  allAlbums={allAlbums}
+                  searchText={searchText}
+                />
+              </View>
             </View>
-          </View>
-        ) : (
-          <View>
-            <></>
-          </View>
-        )}
-      </ScrollView>
-      <Modalize snapPoint={250} ref={ModalizeTrackRef}>
+          ) : (
+            <View>
+              <></>
+            </View>
+          )}
+        </ScrollView>
+      ) : (
+        <Loader />
+      )}
+      <Modalize snapPoint={350} ref={ModalizeTrackRef}>
         <View style={styles.ModalContainer}>
           <View style={styles.ModalContent}>
             <View
@@ -384,6 +395,51 @@ const Search: FC<ISearch> = ({ navigation }) => {
                 </Text>
               </TouchableOpacity>
             ))}
+            {trackIsAdded === true ? (
+              <View style={styles.ModalBlock}>
+                <TouchableOpacity
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                  }}
+                  onPress={() => DeleteTrackFromPerson(modalizeItem)}
+                >
+                  <Ionicons name="trash-outline" size={30} color="red" />
+
+                  <Text
+                    style={{
+                      color: "white",
+                      flexDirection: "row",
+                      alignItems: "center",
+                    }}
+                  >
+                    Удалить аудиозапись
+                  </Text>
+                </TouchableOpacity>
+              </View>
+            ) : (
+              <TouchableOpacity
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
+                onPress={() => AddTrackToPersonPages(modalizeItem)}
+              >
+                <AntDesign name="plus" size={30} color="#00b3ff" />
+
+                <Text
+                  style={{
+                    color: "white",
+                    flexDirection: "row",
+                    alignItems: "center",
+                  }}
+                >
+                  Добавить аудиозапись
+                </Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
       </Modalize>

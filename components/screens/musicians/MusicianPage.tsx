@@ -49,6 +49,8 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
     infinityTracksStatus,
     playingStatus,
     key,
+    trackIsAdded,
+    TrackIsAdded,
   } = useMusic();
   const [musicianId, setMusicianId] = useState<number>();
   const [musician, setMusician] = useState<IMusicians>();

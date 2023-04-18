@@ -54,6 +54,8 @@ const MusicPlayer: FC = ({}) => {
     setIsLooping,
     currentPlaylist,
     infinityTracksStatus,
+    trackIsAdded,
+    TrackIsAdded,
   } = useMusic();
 
   console.log(isLooping);
@@ -86,6 +88,11 @@ const MusicPlayer: FC = ({}) => {
     } finally {
     }
   };
+
+  // useEffect(() => {
+
+  //   console.log("TRACK IS ADDED", trackIsAdded);
+  // }, []);
 
   return (
     <View style={styles.container}>
@@ -200,11 +207,15 @@ const MusicPlayer: FC = ({}) => {
             </TouchableOpacity>
           )}
         </View>
-        <View>
-          <TouchableOpacity onPress={AddTrackToPerson}>
-            <AntDesign name="plus" size={40} color="white" />
-          </TouchableOpacity>
-        </View>
+        {trackIsAdded === true ? (
+          <AntDesign name="heart" size={40} color="white" />
+        ) : (
+          <View>
+            <TouchableOpacity onPress={AddTrackToPerson}>
+              <AntDesign name="plus" size={40} color="white" />
+            </TouchableOpacity>
+          </View>
+        )}
       </View>
       {/* {songsNow?.[indexNow]?.musicians?.map((musician: IMusicians) => (
         <TouchableOpacity
@@ -220,9 +231,9 @@ const MusicPlayer: FC = ({}) => {
         scrollViewProps={{ scrollEnabled: false }}
       >
         <View>
-          {songsNow?.map((songs: ITrack) => (
+          {/* {songsNow?.map((songs: ITrack) => (
             <Text> {songs.title} </Text>
-          ))}
+          ))} */}
           {/* {songsNow?.[indexNow].musicians?.map((musician: IMusicians) => (
             <TouchableOpacity
               onPress={() =>

@@ -20,6 +20,7 @@ import { API_URL } from "./api";
 import { IOperationResult } from "../Interfaces/OperationResult";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "./AuthProvider";
+import { IPerson } from "../Interfaces/Auth";
 
 interface IContext {
   activeMiniPlayer: boolean;
@@ -35,7 +36,7 @@ interface IContext {
   ModalizeRef: any;
   NextTrack: any;
   trackPlayNow: any;
-  songsNow: ITrack | null | undefined;
+  songsNow: ITrack;
   setSongsNow: React.Dispatch<React.SetStateAction<ITrack | null | undefined>>;
   indexNow: number;
   setIndexNow: any;
@@ -73,6 +74,11 @@ interface IContext {
   setInfinityTracks: any;
   setInfinityTracksStatus: React.Dispatch<React.SetStateAction<boolean>>;
   ListenTrack: any;
+  TrackIsAdded: (item: any, index: number) => Promise<true | undefined>;
+  trackIsAdded: boolean;
+  DeleteTrackFromPerson: (item: any) => Promise<void>;
+  TrackIsAddedPages: (item: any) => Promise<void>;
+  AddTrackToPersonPages: (item: any) => Promise<void>;
 }
 
 type Props = { children: ReactNode };
@@ -98,6 +104,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
   const [infinityTracksStatus, setInfinityTracksStatus] =
     useState<boolean>(false);
   const [infinityTracks, setInfinityTracks] = useState<any>();
+  const [trackIsAdded, setTrackIsAdded] = useState<boolean>();
   const calculateSeekBar = (
     playbackPosition: number,
     playbackDuration: number
@@ -108,13 +115,10 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     return 0;
   };
 
-  const { user } = useAuth();
+  const { user, token } = useAuth();
 
   const ListenTrack = async (item: ITrack, index: number) => {
     try {
-      console.log("ПРОСЛУШИВАНИЕ ТРЕКА");
-      console.log("ТРЕК", item?.[index]?.id);
-      console.log("ПОЛЬЗОВАТЕЛЬ", user?.id);
       const { data } = await axios
         .post(
           `${API_URL}/Tracks/listen-track?trackId=${item?.[index]?.id}&personId=${user?.id}`
@@ -125,11 +129,95 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         });
       console.log("Успешно");
       console.log(data);
-      // console.log(token);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
-      // console.log(`Bearer ${token}`);
+    } finally {
+    }
+  };
+
+  const TrackIsAdded = async (item: ITrack, index: number) => {
+    try {
+      console.log("НАЧАЛО МЕТОДА TrackIsAdded");
+
+      const { data } = await axios.get<IOperationResult<boolean>>(
+        `${API_URL}/Tracks/trackIsAdded?trackId=${item?.[index]?.id}&personId=${user?.id}`
+      );
+      if (data.success) {
+        setTrackIsAdded(data.result);
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const TrackIsAddedPages = async (item: ITrack) => {
+    try {
+      console.log("НАЧАЛО МЕТОДА TrackIsAdded");
+
+      const { data } = await axios.get<IOperationResult<boolean>>(
+        `${API_URL}/Tracks/trackIsAdded?trackId=${item?.id}&personId=${user?.id}`
+      );
+      if (data.success) {
+        setTrackIsAdded(data.result);
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const DeleteTrackFromPerson = async (item: ITrack) => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios.delete<IOperationResult<any>>(
+        `${API_URL}/Tracks/delete-track-to-person?personId=${user?.id}&trackId=${item.id}`,
+        {
+          headers: {
+            Authorization: `bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        alert("ok");
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const AddTrackToPersonPages = async (item: ITrack) => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios
+        .get(
+          `${API_URL}/Tracks/add-track-to-peson?personId=${user?.id}&trackId=${item?.id}`,
+          {
+            headers: {
+              Authorization: `Bearer  ${token}`,
+            },
+          }
+        )
+        .then((x) => {
+          return x;
+        });
+      console.log("Успешно");
+      alert("Трек добавлен");
+      console.log(data);
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
     } finally {
     }
   };
@@ -142,36 +230,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setFullDuration(playbackDuration);
       setPlaybackPositionNow(playbackPosition);
       setTrackIndexNow(playbackStatus.playableDurationMillis);
-      console.log(playbackStatus);
-
       // console.log(playbackStatus);
-
-      // if (playbackStatus.didJustFinish === true) {
-      //   await NextTrack();
-      // }
-
-      // console.log(playbackStatus.didJustFinish);
-      // const status = playbackStatus.positionMillis;
-
-      // console.log(status, " -status");
-      // console.log(duration);
-
-      // console.log(playbackStatus);
-      // console.log(playbackDuration);
-      // console.log(playbackPosition);
-      // console.log(playbackDuration);
-      // console.log(playbackStatus);
-      // console.log(playbackDuration);
-      // console.log(indexNow);
-
-      // console.log(itemNow);
-
-      // if (isLooping === true) {
-      //   if (fullDuration - 100 < playbackPositionNow) {
-      //     setFullDuration(101);
-      //     LoopingTrack();
-      //   }
-      // }
     }
   }
 
@@ -183,7 +242,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
 
   async function playSound(item: any, index: any) {
     setCurrentPlaylist(item);
-    console.log(currentPlaylist);
+    // console.log(currentPlaylist);
     setIsLooping(false);
     if (item === undefined) return 0;
     if (item[index].url !== key) {
@@ -213,6 +272,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setSound(sound);
       setPlayingStatus("playing");
       console.log("Playing Sound");
+      TrackIsAdded(item, index);
       ListenTrack(item, index);
       return sound?.setOnPlaybackStatusUpdate(OnPlaybackStatusUpdate);
     } else {
@@ -316,26 +376,18 @@ export const MusicProvider: FC<Props> = ({ children }) => {
 
   const getRandomTrack = async () => {
     try {
-      // console.log("GET RANDOM TRACKS//////////////");
-
       const { data } = await axios
-        .get<IOperationResult<ITrack[]>>(`${API_URL}/Tracks/get-random-track`, {
-          // headers: {
-          //   Authorization: `Bearer  ${token}`,
-          // },
-        })
+        .get<IOperationResult<ITrack[]>>(
+          `${API_URL}/Tracks/get-random-track`,
+          {}
+        )
         .then((x) => {
-          console.log(x);
           return x;
         });
       setInfinityTracks(data.result);
-      // setTracks(data.result);
-      // console.log("data", infinityTracks);
-      // console.log(token);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
-      // console.log(`Bearer ${token}`);
     } finally {
     }
   };
@@ -383,6 +435,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setInfinityTracksStatus,
       currentPlaylist,
       ListenTrack,
+      TrackIsAdded,
+      trackIsAdded,
+      DeleteTrackFromPerson,
+      TrackIsAddedPages,
+      AddTrackToPersonPages,
     }),
     [
       activeMiniPlayer,
@@ -428,6 +485,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setInfinityTracks,
       setInfinityTracksStatus,
       ListenTrack,
+      TrackIsAdded,
+      trackIsAdded,
+      DeleteTrackFromPerson,
+      TrackIsAddedPages,
+      AddTrackToPersonPages,
     ]
   );
   return (
@@ -474,6 +536,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         setInfinityTracksStatus,
         currentPlaylist,
         ListenTrack,
+        TrackIsAdded,
+        trackIsAdded,
+        DeleteTrackFromPerson,
+        TrackIsAddedPages,
+        AddTrackToPersonPages,
       }}
     >
       {children}
