@@ -31,8 +31,9 @@ const MyTracks: FC = () => {
     setInfinityTracksStatus,
     infinityTracksStatus,
     songsNow,
-    ListenTrack,
     indexNow,
+    TrackIsAdded,
+    trackIsAdded,
   } = useMusic();
   const navigation = useNavigation();
   const ModalizeTrackRef = useRef<any>(null);
@@ -63,7 +64,6 @@ const MyTracks: FC = () => {
         setTracks(data.result);
         return true;
       }
-      console.log(data);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
@@ -88,7 +88,6 @@ const MyTracks: FC = () => {
         alert("ok");
         return true;
       }
-      console.log(data);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
@@ -99,6 +98,7 @@ const MyTracks: FC = () => {
   const playMyTracks = async (index: number) => {
     await setInfinityTracksStatus(false);
     console.log("infinityTracksStatus", infinityTracksStatus);
+    // await TrackIsAdded(tracks, index);
     await playSound(tracks, index);
   };
 
@@ -258,7 +258,7 @@ const MyTracks: FC = () => {
                 }}
               />
               <Text style={{ color: "white", marginLeft: 20 }}>
-                {modalizeItem?.title}{" "}
+                {modalizeItem?.title}
               </Text>
             </View>
             <View style={styles.ModalBlock}>
