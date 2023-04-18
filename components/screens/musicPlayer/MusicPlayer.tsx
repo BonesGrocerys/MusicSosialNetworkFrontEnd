@@ -56,6 +56,7 @@ const MusicPlayer: FC = ({}) => {
     infinityTracksStatus,
     trackIsAdded,
     TrackIsAdded,
+    setTrackIsAdded,
   } = useMusic();
 
   console.log(isLooping);
@@ -77,6 +78,7 @@ const MusicPlayer: FC = ({}) => {
           console.log(x);
           return x;
         });
+      setTrackIsAdded(true);
       console.log("Успешно");
       alert("Трек добавлен");
       console.log(data);

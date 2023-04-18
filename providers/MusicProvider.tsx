@@ -79,6 +79,7 @@ interface IContext {
   DeleteTrackFromPerson: (item: any) => Promise<void>;
   TrackIsAddedPages: (item: any) => Promise<void>;
   AddTrackToPersonPages: (item: any) => Promise<void>;
+  setTrackIsAdded: React.Dispatch<React.SetStateAction<boolean | undefined>>;
 }
 
 type Props = { children: ReactNode };
@@ -440,6 +441,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       DeleteTrackFromPerson,
       TrackIsAddedPages,
       AddTrackToPersonPages,
+      setTrackIsAdded,
     }),
     [
       activeMiniPlayer,
@@ -490,6 +492,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       DeleteTrackFromPerson,
       TrackIsAddedPages,
       AddTrackToPersonPages,
+      setTrackIsAdded,
     ]
   );
   return (
@@ -541,6 +544,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         DeleteTrackFromPerson,
         TrackIsAddedPages,
         AddTrackToPersonPages,
+        setTrackIsAdded,
       }}
     >
       {children}
