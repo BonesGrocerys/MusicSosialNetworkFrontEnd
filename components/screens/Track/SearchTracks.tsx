@@ -26,6 +26,7 @@ import { useMusic } from "../../../providers/MusicProvider";
 import { TypeRootStackParamList } from "../../../navigation/types";
 import { RouteProp } from "@react-navigation/native";
 import { AntDesign } from "@expo/vector-icons";
+import ModalizeTrack from "./ModalizeTrack";
 
 interface ISearchTracks {
   route: RouteProp<TypeRootStackParamList, "SearchTracks">;
@@ -191,100 +192,16 @@ const SearchTracks: FC<ISearchTracks> = ({ route }) => {
         </View>
       </View>
 
-      <Modalize
-        snapPoint={350}
-        ref={ModalizeTrackRef}
-        scrollViewProps={{ scrollEnabled: false }}
-        panGestureEnabled={false}
-      >
-        <View style={styles.ModalContainer}>
-          <View style={styles.ModalContent}>
-            <View
-              style={{
-                borderBottomWidth: 0.3,
-                borderBottomColor: "#1b1b1b",
-                width: "100%",
-                alignItems: "center",
-                flexDirection: "row",
-              }}
-            >
-              <Image
-                source={{
-                  uri: `data:image/jpeg;base64,${modalizeItem?.cover}`,
-                }}
-                style={{
-                  width: 80,
-                  height: 80,
-                  borderRadius: 5,
-                  marginTop: 10,
-                  marginLeft: 20,
-                  marginBottom: 10,
-                }}
-              />
-              <Text style={{ color: "white", marginLeft: 20 }}>
-                {modalizeItem?.title}
-              </Text>
-            </View>
-            {modalizeItem?.musicians?.map((musician: IMusicians) => (
-              <TouchableOpacity
-                style={styles.ModalBlock}
-                onPress={() =>
-                  navigation.navigate("MusicianPage", { ...musician })
-                }
-              >
-                <Text style={{ color: "white" }}>
-                  {musician.nickname}&nbsp;
-                </Text>
-              </TouchableOpacity>
-            ))}
-            {trackIsAdded === true ? (
-              <View style={styles.ModalBlock}>
-                <TouchableOpacity
-                  style={{
-                    flexDirection: "row",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                  }}
-                  onPress={() => DeleteTrackFromPerson(modalizeItem)}
-                >
-                  <Ionicons name="trash-outline" size={30} color="red" />
-
-                  <Text
-                    style={{
-                      color: "white",
-                      flexDirection: "row",
-                      alignItems: "center",
-                    }}
-                  >
-                    Удалить аудиозапись
-                  </Text>
-                </TouchableOpacity>
-              </View>
-            ) : (
-              <TouchableOpacity
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  justifyContent: "space-between",
-                }}
-                onPress={() => AddTrackToPersonPages(modalizeItem)}
-              >
-                <AntDesign name="plus" size={30} color="#00b3ff" />
-
-                <Text
-                  style={{
-                    color: "white",
-                    flexDirection: "row",
-                    alignItems: "center",
-                  }}
-                >
-                  Добавить аудиозапись
-                </Text>
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
-      </Modalize>
+      {modalizeItem ? (
+        <ModalizeTrack
+          modalizeItem={modalizeItem}
+          ModalizeTrackRef={ModalizeTrackRef}
+          trackIsAdded={trackIsAdded}
+          navigation={navigation}
+        ></ModalizeTrack>
+      ) : (
+        <></>
+      )}
     </View>
   );
 };

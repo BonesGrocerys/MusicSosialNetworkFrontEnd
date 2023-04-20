@@ -70,7 +70,7 @@ const Library: FC = () => {
           <AntDesign style={styles.icons} name="right" size={24} color="grey" />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("MyPlaylists")}>
         <View style={styles.container}>
           <View style={styles.text}>
             <MaterialCommunityIcons

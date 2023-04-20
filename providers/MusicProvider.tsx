@@ -21,6 +21,7 @@ import { IOperationResult } from "../Interfaces/OperationResult";
 import { useNavigation } from "@react-navigation/native";
 import { useAuth } from "./AuthProvider";
 import { IPerson } from "../Interfaces/Auth";
+import { IPlaylist } from "../Interfaces/Playlist";
 
 interface IContext {
   activeMiniPlayer: boolean;
@@ -80,6 +81,9 @@ interface IContext {
   TrackIsAddedPages: (item: any) => Promise<void>;
   AddTrackToPersonPages: (item: any) => Promise<void>;
   setTrackIsAdded: React.Dispatch<React.SetStateAction<boolean | undefined>>;
+  GetPlaylistByPersonId: () => Promise<IPlaylist[]>;
+  playlistsByPersonId: IPlaylist[];
+  AddTrackToPlaylist: (trackId: number, playlistId: number) => Promise<void>;
 }
 
 type Props = { children: ReactNode };
@@ -106,6 +110,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     useState<boolean>(false);
   const [infinityTracks, setInfinityTracks] = useState<any>();
   const [trackIsAdded, setTrackIsAdded] = useState<boolean>();
+  const [playlistsByPersonId, setPlaylistsByPersonId] = useState<IPlaylist[]>();
   const calculateSeekBar = (
     playbackPosition: number,
     playbackDuration: number
@@ -217,6 +222,50 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setTrackIsAdded(true);
       console.log("Успешно");
       alert("Трек добавлен");
+      console.log(data);
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const GetPlaylistByPersonId = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios.get<IOperationResult<IPlaylist[]>>(
+        `${API_URL}/Playlist/get-playlists-by-personId?personId=${user?.id}`,
+        {
+          headers: {
+            Authorization: `bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        setPlaylistsByPersonId(data.result);
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const AddTrackToPlaylist = async (trackId: number, playlistId: number) => {
+    try {
+      const { data } = await axios
+        .post(
+          `${API_URL}/Playlist/add-track-to-playlist?trackId=${trackId}&playlistId=${playlistId}`
+        )
+        .then((x) => {
+          console.log(x);
+          return x;
+        });
+      alert("Трек добавлен в плейлист");
+      console.log("Успешно");
       console.log(data);
     } catch (e) {
       console.log("ОШИБКА");
@@ -444,6 +493,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       TrackIsAddedPages,
       AddTrackToPersonPages,
       setTrackIsAdded,
+      GetPlaylistByPersonId,
+      playlistsByPersonId,
+      AddTrackToPlaylist,
     }),
     [
       activeMiniPlayer,
@@ -495,6 +547,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       TrackIsAddedPages,
       AddTrackToPersonPages,
       setTrackIsAdded,
+      GetPlaylistByPersonId,
+      playlistsByPersonId,
+      AddTrackToPlaylist,
     ]
   );
   return (
@@ -547,6 +602,9 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         TrackIsAddedPages,
         AddTrackToPersonPages,
         setTrackIsAdded,
+        GetPlaylistByPersonId,
+        playlistsByPersonId,
+        AddTrackToPlaylist,
       }}
     >
       {children}

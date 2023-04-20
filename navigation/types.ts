@@ -20,4 +20,5 @@ export type TypeRootStackParamList = {
   SearchMusician: any;
   SearchAlbum: any;
   AddTrackInPlaylist: any;
+  MyPlaylists: any;
 };

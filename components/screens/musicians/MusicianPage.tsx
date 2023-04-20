@@ -41,7 +41,6 @@ type MusicianPageScreenRouteProp = RouteProp<TypeRootStackParamList>;
 ("MusicianPage");
 
 const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
-  // const navigation = useNavigation();
   const {
     songsNow,
     indexNow,

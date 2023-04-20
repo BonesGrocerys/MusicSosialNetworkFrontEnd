@@ -59,7 +59,7 @@ const MusicPlayer: FC = ({}) => {
     setTrackIsAdded,
   } = useMusic();
 
-  console.log(isLooping);
+  // console.log(isLooping);
 
   const AddTrackToPerson = async () => {
     try {
@@ -82,19 +82,37 @@ const MusicPlayer: FC = ({}) => {
       console.log("Успешно");
       alert("Трек добавлен");
       console.log(data);
-      // console.log(token);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
-      // console.log(`Bearer ${token}`);
     } finally {
     }
   };
 
-  // useEffect(() => {
+  const DeleteTrackFromPersonMusicPlayer = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
 
-  //   console.log("TRACK IS ADDED", trackIsAdded);
-  // }, []);
+      const { data } = await axios.delete<IOperationResult<any>>(
+        `${API_URL}/Tracks/delete-track-to-person?personId=${user?.id}&trackId=${songsNow?.[indexNow].id}`,
+        {
+          headers: {
+            Authorization: `bearer ${token}`,
+          },
+        }
+      );
+
+      if (data.success) {
+        alert("ok");
+        setTrackIsAdded(false);
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -210,11 +228,13 @@ const MusicPlayer: FC = ({}) => {
           )}
         </View>
         {trackIsAdded === true ? (
-          <AntDesign name="heart" size={40} color="white" />
+          <TouchableOpacity onPress={() => DeleteTrackFromPersonMusicPlayer()}>
+            <AntDesign name="heart" size={40} color="white" />
+          </TouchableOpacity>
         ) : (
           <View>
             <TouchableOpacity onPress={AddTrackToPerson}>
-              <AntDesign name="plus" size={40} color="white" />
+              <AntDesign name="hearto" size={40} color="white" />
             </TouchableOpacity>
           </View>
         )}

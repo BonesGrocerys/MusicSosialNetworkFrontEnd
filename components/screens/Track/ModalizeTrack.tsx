@@ -106,7 +106,11 @@ const ModalizeTrack: FC<IModalizeTrack> = ({
 
           <TouchableOpacity
             style={styles.ModalBlock}
-            onPress={() => navigation.navigate("AddTrackInPlaylist")}
+            onPress={() =>
+              navigation.navigate("AddTrackInPlaylist", {
+                modalizeItem,
+              })
+            }
           >
             <Text style={{ color: "white" }}>Добавить в плейлист</Text>
           </TouchableOpacity>
