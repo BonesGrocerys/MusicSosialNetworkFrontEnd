@@ -29,6 +29,7 @@ import Profile from "../components/screens/library/Profile/Profile";
 import SearchTracks from "../components/screens/Track/SearchTracks";
 import SearchMusician from "../components/screens/musicians/SearchMusician";
 import SearchAlbum from "../components/album/SearchAlbum";
+import AddTrackInPlaylist from "../components/screens/Track/AddTrackInPlaylist";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -121,6 +122,11 @@ const SearchStack = () => {
         name="SearchAlbum"
         component={SearchAlbum}
         options={{ title: "Альбомы по запросу" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="AddTrackInPlaylist"
+        component={AddTrackInPlaylist}
+        options={{ title: "Ваши плейлисты" }}
       ></Stack.Screen>
     </Stack.Navigator>
   );

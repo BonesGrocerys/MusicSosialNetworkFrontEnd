@@ -188,6 +188,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
 
       if (data.success) {
         alert("ok");
+        setTrackIsAdded(false);
         return true;
       }
     } catch (e) {
@@ -213,6 +214,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         .then((x) => {
           return x;
         });
+      setTrackIsAdded(true);
       console.log("Успешно");
       alert("Трек добавлен");
       console.log(data);

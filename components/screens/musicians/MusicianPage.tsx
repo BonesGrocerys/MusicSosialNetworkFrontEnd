@@ -24,6 +24,7 @@ import { Modalize } from "react-native-modalize";
 import { Ionicons } from "@expo/vector-icons";
 import { IAlbum } from "../../../Interfaces/Album";
 import Loader from "../../ui/Loader";
+import ModalizeTrack from "../Track/ModalizeTrack";
 interface IMusicianPage {
   // route: RouteProp<TypeRootStackParamList, "MusicianPage">;
   // navigation: NavigationProp<TypeRootStackParamList, "MusicianPage">;
@@ -362,7 +363,17 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
 
           <View style={{ height: 100 }}></View>
         </ScrollView>
-        <Modalize
+        {modalizeItem ? (
+          <ModalizeTrack
+            modalizeItem={modalizeItem}
+            ModalizeTrackRef={ModalizeTrackRef}
+            trackIsAdded={trackIsAdded}
+            navigation={navigation}
+          ></ModalizeTrack>
+        ) : (
+          <></>
+        )}
+        {/* <Modalize
           snapPoint={250}
           ref={ModalizeTrackRef}
           // scrollViewProps={{ scrollEnabled: false }}
@@ -396,9 +407,9 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
                   {modalizeItem?.title}
                 </Text>
               </View>
-              {/* <View>
+              <View>
                 <Text style={{ color: "white" }}>Музыканты:</Text>
-              </View> */}
+              </View>
               {modalizeItem?.musicians?.map((musician: IMusicians) => (
                 <TouchableOpacity
                   style={styles.ModalBlock}
@@ -413,7 +424,7 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
               ))}
             </View>
           </View>
-        </Modalize>
+        </Modalize> */}
       </View>
     </View>
   );
