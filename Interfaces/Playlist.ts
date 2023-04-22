@@ -4,3 +4,9 @@ export interface IPlaylist {
   creator: string;
   creatorId: number;
 }
+
+export interface ICreatePlaylistRequest {
+  name: string;
+  personId: number;
+  playlistImage: File;
+}
