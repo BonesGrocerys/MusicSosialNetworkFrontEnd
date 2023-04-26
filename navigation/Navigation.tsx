@@ -31,6 +31,9 @@ import SearchMusician from "../components/screens/musicians/SearchMusician";
 import SearchAlbum from "../components/album/SearchAlbum";
 import AddTrackInPlaylist from "../components/screens/Track/AddTrackInPlaylist";
 import MyPlaylists from "../components/screens/library/myPlaylists/MyPlaylists";
+import CreatePlaylist from "../components/screens/library/myPlaylists/CreatePlaylist";
+import Playlist from "../components/screens/library/myPlaylists/Playlist";
+import PlaylistUpdate from "../components/screens/library/myPlaylists/PlaylistUpdate";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -85,6 +88,21 @@ const LibraryStack = () => {
         name="MyPlaylists"
         component={MyPlaylists}
         options={{ title: "Плейлисты" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="CreatePlaylist"
+        component={CreatePlaylist}
+        options={{ title: "Создание плейлиста" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="Playlist"
+        component={Playlist}
+        options={{ title: "Плейлист" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="PlaylistUpdate"
+        component={PlaylistUpdate}
+        options={{ title: "Обновление плейлиста" }}
       ></Stack.Screen>
     </Stack.Navigator>
   );

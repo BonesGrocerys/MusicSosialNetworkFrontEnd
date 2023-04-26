@@ -1,4 +1,5 @@
 import { IAlbum } from "../Interfaces/Album";
+import { IPlaylist } from "../Interfaces/Playlist";
 import { IMusicians } from "../Interfaces/Tracks";
 
 export type TypeRootStackParamList = {
@@ -21,4 +22,7 @@ export type TypeRootStackParamList = {
   SearchAlbum: any;
   AddTrackInPlaylist: any;
   MyPlaylists: any;
+  CreatePlaylist: any;
+  Playlist: any;
+  PlaylistUpdate: any;
 };

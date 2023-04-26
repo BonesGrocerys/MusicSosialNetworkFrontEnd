@@ -145,7 +145,7 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     position: "absolute",
     bottom: 64,
-    height: 60,
+    height: 50,
     zIndex: 1,
     backgroundColor: "#101010",
   },

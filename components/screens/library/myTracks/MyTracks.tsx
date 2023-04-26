@@ -20,7 +20,6 @@ import { IOperationResult } from "../../../../Interfaces/OperationResult";
 import { IMusicians, ITrack } from "../../../../Interfaces/Tracks";
 import { useAuth } from "../../../../providers/AuthProvider";
 import { useNavigation } from "@react-navigation/native";
-import MusicianPage from "../../musicians/MusicianPage";
 import { truncate } from "lodash";
 import Loader from "../../../ui/Loader";
 const MyTracks: FC = () => {
@@ -38,7 +37,7 @@ const MyTracks: FC = () => {
   const navigation = useNavigation();
   const ModalizeTrackRef = useRef<any>(null);
   const { user, getToken, token } = useAuth();
-  const [tracks, setTracks] = useState<ITrack[]>();
+  const [tracks, setTracks] = useState<ITrack[] | null>();
   const [modalizeItem, setModalizeItem] = useState<ITrack>();
 
   const handlePress = async (itemData: ITrack) => {
@@ -65,6 +64,7 @@ const MyTracks: FC = () => {
         return true;
       }
     } catch (e) {
+      setTracks(null);
       console.log("ОШИБКА");
       console.log(e);
     } finally {
@@ -114,7 +114,11 @@ const MyTracks: FC = () => {
 
   return (
     <View style={styles.container}>
-      {tracks ? (
+      {tracks === null ? (
+        <View style={{ alignItems: "center", marginTop: "50%" }}>
+          <Text style={{ color: "white" }}>Треков пока нет</Text>
+        </View>
+      ) : (
         <View>
           {tracks ? (
             <View>
@@ -226,21 +230,8 @@ const MyTracks: FC = () => {
               </View>
             </View>
           ) : (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-              }}
-            >
-              <Text style={{ color: "white", fontSize: 20 }}>Загрузка...</Text>
-              <Loader />
-            </View>
+            <Loader />
           )}
-        </View>
-      ) : (
-        <View style={{ height: "100%", width: "100%", alignItems: "center" }}>
-          <Text style={{ color: "white" }}>Треков пока нет</Text>
         </View>
       )}
 

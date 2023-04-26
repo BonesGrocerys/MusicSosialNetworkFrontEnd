@@ -2,161 +2,285 @@ import {
   View,
   Text,
   Image,
-  Button,
   TouchableOpacity,
   TextInput,
+  StyleSheet,
+  Dimensions,
+  ImageBackground,
+  ScrollView,
 } from "react-native";
-import React, { FC, useState, useEffect } from "react";
-import * as ImagePicker from "expo-image-picker/src/ImagePicker";
-import Field from "../../../ui/Field";
-import { ICreatePlaylistRequest } from "../../../../Interfaces/Playlist";
+import React, { FC, useState, useEffect, useRef } from "react";
+import { IPlaylist } from "../../../../Interfaces/Playlist";
 import axios, { AxiosError } from "axios";
 import { IOperationResult } from "../../../../Interfaces/OperationResult";
 import { API_URL } from "../../../../providers/api";
 import { useAuth } from "../../../../providers/AuthProvider";
-
+import { Entypo } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
+import { AntDesign } from "@expo/vector-icons";
+import Loader from "../../../ui/Loader";
+import { Modalize } from "react-native-modalize";
 const PlaylistsCreatedByMe: FC = () => {
-  const [imageData, setImageData] = useState<{
-    uri: string;
-    name: string | null | undefined;
-    type: string | undefined;
-  } | null>(null);
-  const [image, setImage] = useState<string>();
-  const [name, setName] = useState<string>("");
-
-  const handleNameChange = (text: string) => {
-    setName(text);
-  };
+  const navigation = useNavigation();
+  const [myPlaylists, setMyPlaylists] = useState<IPlaylist[] | null>();
+  const [playlist, setPlaylist] = useState<IPlaylist>();
+  const modalizePlaylistRef = useRef<any>(null);
   const { user } = useAuth();
-  // РАБОЧИЙ КОД
-  // const pickImage = async () => {
-  //   let result = await ImagePicker.launchImageLibraryAsync({
-  //     mediaTypes: ImagePicker.MediaTypeOptions.All,
-  //     allowsEditing: true,
-  //     aspect: [4, 3],
-  //     quality: 1,
-  //   });
+  const getAllMyPlaysts = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
 
-  //   if (!result.cancelled) {
-  //     setImage(result.uri);
+      const { data } = await axios.get<IOperationResult<IPlaylist[]>>(
+        `${API_URL}/Playlist/get-playlists-by-personId?personId=${user?.id}`,
+        {
+          headers: {
+            // Authorization: `bearer ${token}`,
+          },
+        }
+      );
 
-  //     const data = new FormData();
-  //     const response = await fetch(result.uri);
-  //     const blob = await response.blob();
-  //     data.append("image", blob);
-
-  //     console.log(result.uri);
-  //   } else {
-  //     alert("You did not select any image.");
-  //   }
-  // };
-
-  // const CreatePlaylist = async () => {
-  //   console.log("НАЧАЛО МЕТОДА");
-
-  //   try {
-  //     const formData = new FormData();
-  //     formData.append("name", name);
-  //     formData.append("personId", String(user?.id));
-  //     // formData.append("playlistImage", image);
-  //     const { data } = await axios.post<IOperationResult<any>>(
-  //       `${API_URL}/Playlist/create-playlist`,
-  //       { formData },
-  //       {
-  //         headers: {
-  //           "Content-Type": "multipart/form-data",
-  //           // Authorization: `Bearer ${token}`,
-  //         },
-  //       }
-  //     );
-
-  //     console.log(formData);
-
-  //     return data;
-  //   } catch (e) {
-  //     const error = e as AxiosError<IOperationResult<any> | null | undefined>;
-
-  //     if (error.response?.status === 400) {
-  //       alert(error.response?.data?.message);
-  //     }
-
-  //     return error.response?.data!;
-  //   } finally {
-  //   }
-  // };
-
-  const formData = new FormData();
-  formData.append("name", name);
-  formData.append("personId", String(user?.id));
-  if (imageData) {
-    formData.append("playlistImage", {
-      // uri: imageData.uri,
-      name: imageData.name,
-      type: imageData.type!,
-    });
-  }
-
-  const config = {
-    headers: {
-      "Content-Type": "multipart/form-data",
-      // Authorization: `Bearer ${token}`,
-    },
-  };
-
-  const CreatePlaylist = async () => {
-    axios
-      .post<IOperationResult<any>>(
-        `${API_URL}/Playlist/create-playlist`,
-        formData,
-        config
-      )
-      .then((response) => {
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  };
-
-  const pickImage = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 1,
-    });
-
-    if (!result.cancelled) {
-      setImage(result.uri);
-      setImageData({
-        uri: result.uri,
-        name: result.fileName,
-        type: result.type,
-      });
+      if (data.success) {
+        setMyPlaylists(data.result);
+        return true;
+      }
+    } catch (e) {
+      setMyPlaylists(null);
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
     }
   };
+
+  const HandleDeletePlaylist = async () => {
+    await DeletePlaylist();
+    await getAllMyPlaysts();
+    await modalizePlaylistRef.current?.close();
+  };
+
+  const DeletePlaylist = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios.delete<IOperationResult<any>>(
+        `${API_URL}/Playlist/delete-playlist?playlistId=${playlist?.id}`
+      );
+      if (data.success) {
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const handlePress = async (itemData: IPlaylist) => {
+    await setPlaylist(itemData);
+    await modalizePlaylistRef.current?.open();
+  };
+
+  useEffect(() => {
+    getAllMyPlaysts();
+  }, []);
   return (
-    <View>
-      <Text style={{ color: "black" }}>PlaylistsCreatedByMe</Text>
-      <View style={{ alignItems: "center", justifyContent: "center" }}>
-        <Button title="Выбрать фото" onPress={pickImage} />
-        {image && (
-          <Image source={{ uri: image }} style={{ width: 200, height: 200 }} />
-        )}
-      </View>
-      <TextInput
-        value={name}
-        onChangeText={handleNameChange}
-        placeholder="Название"
-      />
+    <View style={styles.container}>
       <TouchableOpacity
-        onPress={() => CreatePlaylist()}
-        style={{ alignItems: "center", marginTop: 30 }}
+        style={{
+          height: 30,
+          alignItems: "center",
+          alignContent: "center",
+          borderBottomWidth: 0.5,
+          borderBottomColor: "grey",
+          marginTop: 10,
+        }}
+        onPress={() => navigation.navigate("CreatePlaylist")}
       >
-        <Text style={{ fontSize: 30 }}>OK</Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            alignContent: "center",
+            justifyContent: "space-around",
+            width: Dimensions.get("window").width,
+          }}
+        >
+          <Text
+            style={{
+              color: "white",
+              fontSize: 13,
+            }}
+          >
+            Создать плейлист
+          </Text>
+          <AntDesign name="right" size={24} color="grey" />
+        </View>
       </TouchableOpacity>
+      {myPlaylists === null ? (
+        <View
+          style={{
+            alignItems: "center",
+            width: "100%",
+            marginTop: "50%",
+          }}
+        >
+          <Text style={{ color: "white" }}>Плейлистов пока нет</Text>
+        </View>
+      ) : (
+        <ScrollView>
+          {myPlaylists ? (
+            <View>
+              {myPlaylists?.map((playlist: IPlaylist) => (
+                <View style={{ flexDirection: "row", alignItems: "center" }}>
+                  <TouchableOpacity
+                    style={{
+                      flexDirection: "row",
+                      marginLeft: 10,
+                      marginTop: 10,
+                      alignContent: "center",
+                      alignItems: "center",
+                      width: "80%",
+                    }}
+                    onPress={() =>
+                      navigation.navigate("Playlist", { playlist })
+                    }
+                  >
+                    <ImageBackground
+                      source={{
+                        uri: `data:image/jpeg;base64,${playlist?.playlistImage}`,
+                      }}
+                      style={{ width: 100, height: 100 }}
+                      imageStyle={{ borderRadius: 6 }}
+                    ></ImageBackground>
+                    <View style={{ width: "50%", alignItems: "center" }}>
+                      <Text style={{ color: "white", fontSize: 16 }}>
+                        {playlist?.name}
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                  <TouchableOpacity
+                    onPress={() => handlePress(playlist)}
+                    style={{ width: "20%" }}
+                  >
+                    <View>
+                      <Entypo
+                        name="dots-three-horizontal"
+                        size={24}
+                        color="white"
+                      />
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              ))}
+              <View style={{ height: 100 }}></View>
+            </View>
+          ) : (
+            <Loader />
+          )}
+        </ScrollView>
+      )}
+
+      <Modalize
+        ref={modalizePlaylistRef}
+        snapPoint={350}
+        scrollViewProps={{ scrollEnabled: false }}
+        panGestureEnabled={false}
+      >
+        <View style={styles.ModalContainer}>
+          <View style={styles.ModalContent}>
+            <View
+              style={{
+                borderBottomWidth: 0.3,
+                borderBottomColor: "#1b1b1b",
+                alignItems: "center",
+                width: "100%",
+              }}
+            >
+              <Image
+                source={{
+                  uri: `data:image/jpeg;base64,${playlist?.playlistImage}`,
+                }}
+                style={{
+                  width: 100,
+                  height: 100,
+                  borderRadius: 5,
+                  marginTop: 10,
+                  marginBottom: 5,
+                }}
+              />
+              <Text style={{ color: "white", marginBottom: 10 }}>
+                {playlist?.name}
+              </Text>
+            </View>
+            <TouchableOpacity
+              style={styles.ModalBlock}
+              onPress={() =>
+                navigation.navigate("PlaylistUpdate", { playlist })
+              }
+            >
+              <Text style={{ color: "white", marginBottom: 10 }}>
+                Обновить плейлист
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.ModalBlock}
+              onPress={() => HandleDeletePlaylist()}
+            >
+              <Text style={{ color: "red", marginBottom: 10 }}>
+                Удалить плейлист
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modalize>
     </View>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    backgroundColor: "black",
+    opacity: 0.93,
+    flex: 1,
+  },
+  ModalContainer: {
+    width: Dimensions.get("window").width,
+    height: Dimensions.get("window").height,
+    backgroundColor: "#0f0f0f",
+    flex: 1,
+    alignItems: "center",
+  },
+  button: {
+    backgroundColor: "#007AFF",
+    borderRadius: 20,
+    padding: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 10,
+    height: 45,
+  },
+  ModalContent: {
+    marginTop: 10,
+    height: Dimensions.get("window").height,
+    width: "90%",
+    backgroundColor: "black",
+    borderRadius: 20,
+    alignItems: "center",
+  },
+  ModalBlock: {
+    height: "6%",
+    width: "100%",
+    borderBottomWidth: 0.3,
+    borderBottomColor: "#1b1b1b",
+    justifyContent: "center",
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 16,
+  },
+});
 
 export default PlaylistsCreatedByMe;

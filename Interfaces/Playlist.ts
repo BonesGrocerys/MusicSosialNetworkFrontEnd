@@ -3,6 +3,7 @@ export interface IPlaylist {
   name: string;
   creator: string;
   creatorId: number;
+  playlistImage: string;
 }
 
 export interface ICreatePlaylistRequest {

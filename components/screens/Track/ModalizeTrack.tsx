@@ -63,7 +63,9 @@ const ModalizeTrack: FC<IModalizeTrack> = ({
               }}
             />
             <Text style={{ color: "white", marginLeft: 20 }}>
-              {modalizeItem?.title}
+              {modalizeItem.title.length > 10
+                ? `${modalizeItem.title.substring(0, 10)}...`
+                : modalizeItem.title}
             </Text>
             {trackIsAdded === true ? (
               <View style={{ marginLeft: "12%" }}>

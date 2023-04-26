@@ -10,7 +10,6 @@ import {
   ImageBackground,
 } from "react-native";
 import React, { FC, useEffect, useState, useRef } from "react";
-import { Modalize } from "react-native-modalize";
 import { Entypo } from "@expo/vector-icons";
 import { useMusic } from "../../providers/MusicProvider";
 import { IMusicians, ITrack } from "../../Interfaces/Tracks";
@@ -27,8 +26,6 @@ import { TypeRootStackParamList } from "../../navigation/types";
 import { truncate } from "lodash";
 import SearchContentMusician from "./SearchContent/SearchContentMusician";
 import SearchContentAlbum from "./SearchContent/SearchContentAlbum";
-import { AntDesign } from "@expo/vector-icons";
-import AddTrackInPlaylist from "./Track/AddTrackInPlaylist";
 import ModalizeTrack from "./Track/ModalizeTrack";
 
 interface ISearch {
