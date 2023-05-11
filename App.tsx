@@ -21,6 +21,8 @@ import { AuthProvider } from "./providers/AuthProvider";
 import MusicianPage from "./components/screens/musicians/MusicianPage";
 import { useNavigation, NavigationProp } from "@react-navigation/native";
 import { TypeRootStackParamList } from "./navigation/types";
+import { LogBox } from "react-native";
+LogBox.ignoreAllLogs();
 
 // type App = {
 //   navigation: NavigationProp<TypeRootStackParamList>;

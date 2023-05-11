@@ -34,6 +34,7 @@ import MyPlaylists from "../components/screens/library/myPlaylists/MyPlaylists";
 import CreatePlaylist from "../components/screens/library/myPlaylists/CreatePlaylist";
 import Playlist from "../components/screens/library/myPlaylists/Playlist";
 import PlaylistUpdate from "../components/screens/library/myPlaylists/PlaylistUpdate";
+import Chart from "../components/screens/Chart";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -152,6 +153,11 @@ const SearchStack = () => {
         component={AddTrackInPlaylist}
         options={{ title: "Ваши плейлисты" }}
       ></Stack.Screen>
+      <Stack.Screen
+        name="Chart"
+        component={Chart}
+        options={{ title: "Чарт треков" }}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -166,7 +172,7 @@ const Navigation: FC = () => {
             tabBarStyle: {
               height: "10%",
               paddingTop: 10,
-              backgroundColor: "rgb(0,0,0)",
+              backgroundColor: "black",
             },
             tabBarLabelStyle: {
               fontWeight: "bold",

@@ -4,6 +4,7 @@ import Field from "../../ui/Field";
 import Button from "../../ui/Button";
 import { useAuth } from "../../../providers/AuthProvider";
 import { IAuthRequest } from "../../../Interfaces/Auth";
+import Loader from "../../ui/Loader";
 
 const Auth: FC = () => {
   const { isLoading, login, error, clearError } = useAuth();
@@ -63,6 +64,7 @@ const Auth: FC = () => {
       >
         <Text style={styles.bottomText}>Зарегистрироваться</Text>
       </TouchableOpacity>
+      {isLoading && <Loader />}
     </View>
   );
 };

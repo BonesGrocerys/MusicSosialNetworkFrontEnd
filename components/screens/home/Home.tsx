@@ -5,6 +5,7 @@ import {
   Dimensions,
   Pressable,
   TouchableOpacity,
+  ImageBackground,
 } from "react-native";
 import React, { FC, useState, useEffect } from "react";
 import { MusicContext, useMusic } from "../../../providers/MusicProvider";
@@ -15,7 +16,7 @@ import { ITrack } from "../../../Interfaces/Tracks";
 import { IAlbum } from "../../../Interfaces/Album";
 import { useAuth } from "../../../providers/AuthProvider";
 import { AntDesign } from "@expo/vector-icons";
-import { ImageBackground } from "react-native";
+
 import { Ionicons } from "@expo/vector-icons";
 
 const Home: FC = () => {
@@ -39,14 +40,20 @@ const Home: FC = () => {
 
   return (
     <View style={styles.container}>
-      <View style={{ paddingTop: 200, alignItems: "center" }}>
-        <Text style={{ color: "white" }}>
-          <TouchableOpacity onPress={PlayInfinityTracks}>
-            <Ionicons name="ios-play" size={40} color="white" />
-          </TouchableOpacity>
-        </Text>
-        <Text style={{ color: "white" }}> Моя волна</Text>
-      </View>
+      <ImageBackground
+        source={require("../../../assets/image/retrowave-synthwave.gif")}
+        style={{ width: "100%", height: "100%", paddingBottom: 130 }}
+        resizeMode="cover"
+      >
+        <View style={{ paddingTop: 200, alignItems: "center" }}>
+          <Text style={{ color: "white" }}>
+            <TouchableOpacity onPress={PlayInfinityTracks}>
+              <Ionicons name="ios-play" size={60} color="white" />
+            </TouchableOpacity>
+          </Text>
+          {/* <Text style={{ color: "white" }}> Моя волна</Text> */}
+        </View>
+      </ImageBackground>
     </View>
   );
 };

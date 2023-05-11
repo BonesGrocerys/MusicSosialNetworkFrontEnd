@@ -27,7 +27,9 @@ import { truncate } from "lodash";
 import SearchContentMusician from "./SearchContent/SearchContentMusician";
 import SearchContentAlbum from "./SearchContent/SearchContentAlbum";
 import ModalizeTrack from "./Track/ModalizeTrack";
-
+import SearchContentChart from "./SearchContent/SearchContentChart";
+import { FontAwesome5 } from "@expo/vector-icons";
+import CustomTextInput from "../ui/TextField";
 interface ISearch {
   navigation: SearchScreenNavigationProp;
   route: SearchScreenRouteProp;
@@ -166,16 +168,28 @@ const Search: FC<ISearch> = ({ navigation }) => {
           alignItems: "center",
         }}
       >
-        <Field
+        {/* <Field
           onChange={(value) => setSearchText(value)}
           value={searchText}
           placeholder="Введите запрос..."
           style={{ width: "80%" }}
           isSearch
-        />
-        <TouchableOpacity onPress={closeInput}>
-          <Ionicons name="md-close-outline" size={30} color="white" />
-        </TouchableOpacity>
+        /> */}
+        <View
+          style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
+        >
+          <CustomTextInput
+            placeholder="Поиск..."
+            onChangeText={(value) => setSearchText(value)}
+          />
+        </View>
+        {/* {searchText ? (
+          <TouchableOpacity onPress={closeInput}>
+            <Ionicons name="md-close-outline" size={30} color="white" />
+          </TouchableOpacity>
+        ) : (
+          <></>
+        )} */}
       </View>
 
       <ScrollView>
@@ -350,7 +364,36 @@ const Search: FC<ISearch> = ({ navigation }) => {
           </View>
         ) : (
           <View>
-            <></>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+                marginTop: 40,
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "500", fontSize: 22 }}>
+                <FontAwesome5 name="crown" size={40} color="#e5d20d" />
+              </Text>
+            </View>
+
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "500", fontSize: 22 }}>
+                Чарт треков
+              </Text>
+            </View>
+
+            <View
+              style={{
+                marginTop: 20,
+              }}
+            >
+              <SearchContentChart />
+            </View>
           </View>
         )}
       </ScrollView>

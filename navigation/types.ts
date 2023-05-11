@@ -25,4 +25,5 @@ export type TypeRootStackParamList = {
   CreatePlaylist: any;
   Playlist: any;
   PlaylistUpdate: any;
+  Chart: any;
 };

@@ -42,7 +42,7 @@ const SearchContentAlbum: FC<ISearchContentAlbum> = ({
         )}
         {allAlbums?.length > 2 ? (
           <TouchableOpacity
-            onPress={() => navigation.navigate("SearchAlbum", { searchText })}
+            onPress={() => navigation.navigate("SearchAlbum", { allAlbums })}
           >
             <Text style={{ color: "white", marginRight: 20 }}>
               Показать все &ensp;

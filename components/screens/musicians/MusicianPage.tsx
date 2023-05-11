@@ -25,6 +25,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { IAlbum } from "../../../Interfaces/Album";
 import Loader from "../../ui/Loader";
 import ModalizeTrack from "../Track/ModalizeTrack";
+import { useAuth } from "../../../providers/AuthProvider";
 interface IMusicianPage {
   // route: RouteProp<TypeRootStackParamList, "MusicianPage">;
   // navigation: NavigationProp<TypeRootStackParamList, "MusicianPage">;
@@ -57,7 +58,70 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
   const [tracks, setTracks] = useState<ITrack[]>();
   const [albums, setAlbums] = useState<IAlbum[]>();
   const [modalizeItem, setModalizeItem] = useState<ITrack>();
+  const [subscribed, setSubscribed] = useState<boolean>();
   const ModalizeTrackRef = useRef<any>(null);
+  const { user } = useAuth();
+
+  const Subscribe = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios.post<IOperationResult<boolean>>(
+        `${API_URL}/Musician/subscribe-to-musician?musicianId=${route?.params?.id}&personId=${user?.id}`
+      );
+      if (data.success) {
+        console.log(data.result);
+        setSubscribed(true);
+
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const Unsubscribe = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios.delete<IOperationResult<boolean>>(
+        `${API_URL}/Musician/unsubscribe?personId=${user?.id}&musicianId=${route?.params?.id}`
+      );
+      if (data.success) {
+        console.log(data.result);
+        setSubscribed(false);
+
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
+  const PersonIsSubscribedToMusician = async () => {
+    try {
+      console.log("НАЧАЛО МЕТОДА");
+
+      const { data } = await axios.get<IOperationResult<boolean>>(
+        `${API_URL}/Musician/person-is-subscribed-to-musician?personId=${user?.id}&musicianId=${route?.params?.id}`
+      );
+      if (data.success) {
+        setSubscribed(data.result);
+        console.log(subscribed);
+
+        return true;
+      }
+    } catch (e) {
+      console.log("ОШИБКА");
+      console.log(e);
+    } finally {
+    }
+  };
+
   const GetMusician = async () => {
     try {
       console.log("НАЧАЛО МЕТОДА");
@@ -133,6 +197,7 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
     GetMusician();
     GetTracksByMusicianId();
     GetAlbumsToMusicianId();
+    PersonIsSubscribedToMusician();
   }, []);
 
   console.log(route?.params?.nickname);
@@ -152,35 +217,78 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
             }}
             imageStyle={{}}
           >
-            <Text
-              style={{
-                color: "white",
-                alignSelf: "flex-start",
-                fontSize: 26,
-                marginLeft: 10,
-              }}
+            <View
+              style={{ flexDirection: "row", justifyContent: "space-between" }}
             >
-              {musician?.nickname}
-            </Text>
-            <Text
-              style={{
-                color: "white",
-                alignSelf: "flex-start",
-                fontSize: 12,
-                marginLeft: 10,
-              }}
-            >
-              Слушатели за месяц: {musician?.monthlyListeners}
-            </Text>
-            {/* <View
-              style={{ backgroundColor: "green", width: 50, height: 50 }}
-            ></View> */}
+              <View>
+                <Text
+                  style={{
+                    color: "white",
+                    alignSelf: "flex-start",
+                    fontSize: 26,
+                    marginLeft: 10,
+                  }}
+                >
+                  {musician?.nickname}
+                </Text>
+                <Text
+                  style={{
+                    color: "white",
+                    alignSelf: "flex-start",
+                    fontSize: 12,
+                    marginLeft: 10,
+                  }}
+                >
+                  Слушатели за месяц: {musician?.monthlyListeners}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginRight: 12,
+                }}
+              >
+                {subscribed === true ? (
+                  <TouchableOpacity
+                    style={styles.unsubscribeButton}
+                    onPress={() => Unsubscribe()}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        marginTop: 5,
+                        color: "white",
+                      }}
+                    >
+                      Отписаться
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.subscribeButton}
+                    onPress={() => Subscribe()}
+                  >
+                    <Text
+                      style={{
+                        textAlign: "center",
+                        marginTop: 5,
+                        color: "white",
+                      }}
+                    >
+                      Подписаться
+                    </Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            </View>
           </ImageBackground>
 
           <View>
             {tracks ? (
               <View>
                 <Text style={{ color: "white", marginTop: 10 }}>Треки:</Text>
+
                 <View>
                   {tracks?.map((item, index) => (
                     <View style={styles.trackView}>
@@ -281,9 +389,7 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
                 >
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate("MusicianTracksPage", {
-                        musicianId,
-                      } as any)
+                      navigation.navigate("MusicianTracksPage", { tracks })
                     }
                   >
                     <Text style={{ color: "white" }}>Показать все треки</Text>
@@ -310,7 +416,7 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
                 <Text style={{ color: "white" }}>Альбомы:</Text>
 
                 <View style={styles.AlbumsContainer}>
-                  {albums?.map((album: IAlbum, index) => (
+                  {albums?.slice(0, 2).map((album: IAlbum, index) => (
                     <TouchableOpacity
                       style={{ marginTop: 5 }}
                       onPress={() =>
@@ -335,9 +441,7 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
                 >
                   <TouchableOpacity
                     onPress={() =>
-                      navigation.navigate("MusicianAlbumPage", {
-                        musicianId,
-                      } as any)
+                      navigation.navigate("MusicianAlbumPage", { albums })
                     }
                   >
                     <Text style={{ color: "white" }}>Показать все альбомы</Text>
@@ -372,58 +476,6 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
         ) : (
           <></>
         )}
-        {/* <Modalize
-          snapPoint={250}
-          ref={ModalizeTrackRef}
-          // scrollViewProps={{ scrollEnabled: false }}
-          // panGestureEnabled={false}
-        >
-          <View style={styles.ModalContainer}>
-            <View style={styles.ModalContent}>
-              <View
-                style={{
-                  borderBottomWidth: 0.3,
-                  borderBottomColor: "#1b1b1b",
-                  width: "100%",
-                  alignItems: "center",
-                  flexDirection: "row",
-                }}
-              >
-                <Image
-                  source={{
-                    uri: `data:image/jpeg;base64,${modalizeItem?.cover}`,
-                  }}
-                  style={{
-                    width: 80,
-                    height: 80,
-                    borderRadius: 5,
-                    marginTop: 10,
-                    marginLeft: 20,
-                    marginBottom: 10,
-                  }}
-                />
-                <Text style={{ color: "white", marginLeft: 20 }}>
-                  {modalizeItem?.title}
-                </Text>
-              </View>
-              <View>
-                <Text style={{ color: "white" }}>Музыканты:</Text>
-              </View>
-              {modalizeItem?.musicians?.map((musician: IMusicians) => (
-                <TouchableOpacity
-                  style={styles.ModalBlock}
-                  onPress={() =>
-                    navigation.push("MusicianPage", { ...musician })
-                  }
-                >
-                  <Text style={{ color: "white" }}>
-                    {musician.nickname}&nbsp;
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          </View>
-        </Modalize> */}
       </View>
     </View>
   );
@@ -484,6 +536,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     flexWrap: "wrap",
     marginTop: 10,
+  },
+  subscribeButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.7)",
+    borderRadius: 5,
+    width: 120,
+    height: 30,
+  },
+  unsubscribeButton: {
+    backgroundColor: "rgba(255, 255, 255, 0.3)",
+    borderRadius: 5,
+    width: 120,
+    height: 30,
   },
 });
 export default MusicianPage;
