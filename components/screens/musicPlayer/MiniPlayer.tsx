@@ -35,28 +35,21 @@ const MiniPlayer: FC = () => {
     duration,
   } = useMusic();
 
-  useEffect(() => {
-    // console.log("useEffect");
-    if (fullDuration - 100 < playbackPositionNow && isLooping === false) {
-      if (infinityTracksStatus === false) {
-        setFullDuration(101);
-        // setDuration(0);
-        setPlaybackPositionNow(0);
-        // setSound(null);
-        NextTrack();
-      } else {
-        setFullDuration(101);
-        // setDuration(0);
-        setPlaybackPositionNow(0);
-        // setSound(null);
-        // NextTrack();
-
-        getRandomTrack(), setKey(-1);
-        playSound(infinityTracks, 0);
-        PlayPause();
-      }
-    }
-  });
+  // useEffect(() => {
+  //   if (fullDuration - 100 < playbackPositionNow && isLooping === false) {
+  //     if (infinityTracksStatus === false) {
+  //       setFullDuration(101);
+  //       setPlaybackPositionNow(0);
+  //       NextTrack();
+  //     } else {
+  //       setFullDuration(101);
+  //       setPlaybackPositionNow(0);
+  //       getRandomTrack(), setKey(-1);
+  //       playSound(infinityTracks, 0);
+  //       PlayPause();
+  //     }
+  //   }
+  // });
 
   useEffect(() => {
     return sound

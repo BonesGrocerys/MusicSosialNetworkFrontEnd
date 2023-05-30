@@ -5,11 +5,12 @@ import Button from "../../ui/Button";
 import { useAuth } from "../../../providers/AuthProvider";
 import { IAuthRequest } from "../../../Interfaces/Auth";
 import Loader from "../../ui/Loader";
+import { useNavigation } from "@react-navigation/native";
 
 const Auth: FC = () => {
   const { isLoading, login, error, clearError } = useAuth();
 
-  // const navigation = useNavigation();
+  const navigation = useNavigation();
 
   const [data, setData] = useState<IAuthRequest>({
     login: "",
@@ -56,11 +57,14 @@ const Auth: FC = () => {
           title="Войти"
           onPress={loginHandler}
         />
+        <View style={{ height: 20 }}>
+          <Text style={{ color: "red" }}>{error && error}</Text>
+        </View>
       </View>
 
       <TouchableOpacity
         style={{ width: "80%" }}
-        //   onPress={() => navigation.navigate('Registration')}
+        onPress={() => navigation.navigate("Registration")}
       >
         <Text style={styles.bottomText}>Зарегистрироваться</Text>
       </TouchableOpacity>

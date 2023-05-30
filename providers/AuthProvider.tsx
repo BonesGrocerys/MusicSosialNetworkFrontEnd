@@ -25,7 +25,7 @@ interface IContext {
   user: IPerson | null | undefined;
   isLoading: boolean;
   login: (authRequest: IAuthRequest) => Promise<void>;
-  // register: (regRequest: IRegistrationRequest) => Promise<boolean>;
+  register: (regRequest: IRegistrationRequest) => Promise<boolean>;
   logout: () => Promise<void>;
   getToken: () => Promise<string | null>;
   error: string | null;
@@ -59,11 +59,37 @@ export const AuthProvider: FC<Props> = ({ children }) => {
 
       if (data.success) {
         setUser(data?.result?.person);
-
+        clearError();
         await SecureStore.setItemAsync("token", data.result!.token);
       }
     } catch (e: any) {
       setError(e?.response?.data?.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const register = async (
+    regRequest: IRegistrationRequest
+  ): Promise<boolean> => {
+    try {
+      setIsLoading(true);
+
+      const { data } = await axios
+        .post<IOperationResult<number>>(
+          `${API_URL}/Auth/registration`,
+          regRequest
+        )
+        .then((resp) => resp);
+
+      if (data.success) {
+        return true;
+      }
+
+      return false;
+    } catch (e: any) {
+      setError(e?.response?.data?.message);
+      return false;
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +118,7 @@ export const AuthProvider: FC<Props> = ({ children }) => {
       user,
       isLoading,
       login,
-      // register,
+      register,
       logout,
       getToken,
       error,

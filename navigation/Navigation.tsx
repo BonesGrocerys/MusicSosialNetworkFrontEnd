@@ -35,6 +35,9 @@ import CreatePlaylist from "../components/screens/library/myPlaylists/CreatePlay
 import Playlist from "../components/screens/library/myPlaylists/Playlist";
 import PlaylistUpdate from "../components/screens/library/myPlaylists/PlaylistUpdate";
 import Chart from "../components/screens/Chart";
+import Registration from "../components/screens/Registration/Registration";
+import MyArtists from "../components/screens/library/MyArtists/MyArtists";
+import GenresPage from "../components/screens/Genres/GenresPage";
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -105,6 +108,11 @@ const LibraryStack = () => {
         component={PlaylistUpdate}
         options={{ title: "Обновление плейлиста" }}
       ></Stack.Screen>
+      <Stack.Screen
+        name="MyArtists"
+        component={MyArtists}
+        options={{ title: "Артисты" }}
+      ></Stack.Screen>
     </Stack.Navigator>
   );
 };
@@ -157,6 +165,11 @@ const SearchStack = () => {
         name="Chart"
         component={Chart}
         options={{ title: "Чарт треков" }}
+      ></Stack.Screen>
+      <Stack.Screen
+        name="GenresPage"
+        component={GenresPage}
+        options={{ title: "Популярные треки жанра" }}
       ></Stack.Screen>
     </Stack.Navigator>
   );
@@ -218,6 +231,10 @@ const Navigation: FC = () => {
         <>
           <Stack.Navigator screenOptions={{ headerShown: false }}>
             <Stack.Screen name="Auth" component={Auth}></Stack.Screen>
+            <Stack.Screen
+              name="Registration"
+              component={Registration}
+            ></Stack.Screen>
           </Stack.Navigator>
         </>
       )}

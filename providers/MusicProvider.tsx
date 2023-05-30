@@ -130,11 +130,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
           `${API_URL}/Tracks/listen-track?trackId=${item?.[index]?.id}&personId=${user?.id}`
         )
         .then((x) => {
-          console.log(x);
+          // console.log(x);
           return x;
         });
       console.log("Успешно");
-      console.log(data);
+      // console.log(data);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
@@ -222,7 +222,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
       setTrackIsAdded(true);
       console.log("Успешно");
       alert("Трек добавлен");
-      console.log(data);
+      // console.log(data);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
@@ -266,7 +266,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         });
       alert("Трек добавлен в плейлист");
       console.log("Успешно");
-      console.log(data);
+      // console.log(data);
     } catch (e) {
       console.log("ОШИБКА");
       console.log(e);
@@ -294,14 +294,13 @@ export const MusicProvider: FC<Props> = ({ children }) => {
 
   async function playSound(item: any, index: any) {
     setCurrentPlaylist(item);
-    // console.log(currentPlaylist);
     setIsLooping(false);
     if (item === undefined) return 0;
     if (item[index].url !== key) {
-      console.log(index, "-index");
+      // console.log(index, "-index");
       setSongsNow(item);
       setIndexNow(index);
-      console.log(indexNow, "-indexNow");
+      // console.log(indexNow, "-indexNow");
       setKey(item[index].url);
       setActiveMiniPlayer(true);
       console.log("Loading Sound");
@@ -311,15 +310,11 @@ export const MusicProvider: FC<Props> = ({ children }) => {
         staysActiveInBackground: true,
       });
       const url = item[index].url;
-      // try {
       const { sound } = await Audio.Sound.createAsync(
         { uri: url },
         { shouldPlay: false, progressUpdateIntervalMillis: 500 }
       );
-      // } catch (err) {
-      //   console.log("Ошибка воспроизведения");
-      // }
-      console.log(item[index].url);
+      // console.log(item[index].url);
       await sound?.playFromPositionAsync(0);
       setSound(sound);
       setPlayingStatus("playing");
@@ -334,7 +329,7 @@ export const MusicProvider: FC<Props> = ({ children }) => {
 
   async function NextTrack() {
     if (infinityTracksStatus === true) {
-      console.log(infinityTracksStatus, "NEXT TRACK");
+      // console.log(infinityTracksStatus, "NEXT TRACK");
 
       await getRandomTrack(), setKey(-1);
       await playSound(infinityTracks, 0);
@@ -393,12 +388,12 @@ export const MusicProvider: FC<Props> = ({ children }) => {
     setIndexNow(null);
     setSongsNow(null);
     setInfinityTracksStatus(false);
-    console.log(infinityTracksStatus, "INFINITY STOP");
+    // console.log(infinityTracksStatus, "INFINITY STOP");
   };
 
-  useEffect(() => {
-    console.log("ИНДЕКС", indexNow);
-  }, [indexNow]);
+  // useEffect(() => {
+  //   console.log("ИНДЕКС", indexNow);
+  // }, [indexNow]);
 
   const convertTime = (minutes: number) => {
     if (minutes) {

@@ -30,6 +30,7 @@ import ModalizeTrack from "./Track/ModalizeTrack";
 import SearchContentChart from "./SearchContent/SearchContentChart";
 import { FontAwesome5 } from "@expo/vector-icons";
 import CustomTextInput from "../ui/TextField";
+import SearchGenres from "./Genres/SearchGenres";
 interface ISearch {
   navigation: SearchScreenNavigationProp;
   route: SearchScreenRouteProp;
@@ -393,6 +394,23 @@ const Search: FC<ISearch> = ({ navigation }) => {
               }}
             >
               <SearchContentChart />
+            </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "center",
+              }}
+            >
+              <Text style={{ color: "white", fontWeight: "500", fontSize: 22 }}>
+                Жанры
+              </Text>
+            </View>
+            <View
+              style={{
+                marginTop: 20,
+              }}
+            >
+              <SearchGenres />
             </View>
           </View>
         )}

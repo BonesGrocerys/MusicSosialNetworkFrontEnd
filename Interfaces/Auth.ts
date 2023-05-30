@@ -10,9 +10,7 @@ export interface IPerson {
 export interface IRegistrationRequest {
   login: string;
   password: string;
-  firstname?: string;
-  lastname?: string;
-  middlename?: string;
+  name?: string;
 }
 
 export interface IAuthRequest {

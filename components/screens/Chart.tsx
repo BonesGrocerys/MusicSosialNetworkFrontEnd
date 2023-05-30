@@ -21,10 +21,12 @@ import { truncate } from "lodash";
 import { IOperationResult } from "../../Interfaces/OperationResult";
 import { useMusic } from "../../providers/MusicProvider";
 import ModalizeTrack from "./Track/ModalizeTrack";
+import Loader from "../ui/Loader";
 
 const Chart: FC = () => {
   const navigation = useNavigation();
   const ModalizeTrackRef = useRef<any>(null);
+  const [loading, setLoading] = useState<boolean>(false);
   const [tracks, setTracks] = useState<ITrack[]>();
   const [modalizeItem, setModalizeItem] = useState<ITrack>();
   const {
@@ -53,6 +55,7 @@ const Chart: FC = () => {
 
   const GetAllTracks = async () => {
     try {
+      setLoading(true);
       console.log("НАЧАЛО МЕТОДА");
 
       const { data } = await axios.get<IOperationResult<ITrack[]>>(
@@ -66,6 +69,7 @@ const Chart: FC = () => {
       console.log("ОШИБКА");
       console.log(e);
     } finally {
+      setLoading(false);
     }
   };
 
@@ -74,7 +78,7 @@ const Chart: FC = () => {
   }, []);
   return (
     <View style={styles.container}>
-      <View></View>
+      {loading && <Loader />}
       <View>
         <View>
           <View>
@@ -256,9 +260,6 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     flexDirection: "row",
     alignItems: "center",
-  },
-  Scroll: {
-    height: Dimensions.get("window").height,
   },
 });
 

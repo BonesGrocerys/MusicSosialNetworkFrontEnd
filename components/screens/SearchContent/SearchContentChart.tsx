@@ -222,7 +222,7 @@ const SearchContentChart: FC = () => {
 };
 const styles = StyleSheet.create({
   container: {
-    height: 400,
+    height: 350,
   },
   //   trackContainer: {
   //     height: 50,

@@ -162,8 +162,6 @@ const MusicianPage: FC<IMusicianPage> = ({ navigation, route }) => {
 
   const GetTracksByMusicianId = async () => {
     try {
-      console.log("НАЧАЛО МЕТОДА");
-
       const { data } = await axios.get<IOperationResult<ITrack[]>>(
         `${API_URL}/Tracks/get-all-tracks-to-musician/${route?.params?.id}`
       );

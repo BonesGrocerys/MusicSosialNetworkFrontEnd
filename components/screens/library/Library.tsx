@@ -47,9 +47,7 @@ const Library: FC = () => {
             }}
             source={require("../../../assets/image/Anemone.jpg")}
           />
-          <Text style={{ color: "white" }}>
-            {user?.Name ? user?.Name : "Имя профиля"}
-          </Text>
+          <Text style={{ color: "white" }}>{user?.Name}</Text>
         </TouchableOpacity>
       </View>
       <TouchableOpacity onPress={() => navigation.navigate("MyTracks")}>
@@ -83,7 +81,7 @@ const Library: FC = () => {
           <AntDesign style={styles.icons} name="right" size={24} color="grey" />
         </View>
       </TouchableOpacity>
-      <TouchableOpacity>
+      <TouchableOpacity onPress={() => navigation.navigate("MyArtists")}>
         <View style={styles.container}>
           <View style={styles.text}>
             <FontAwesome5 name="guitar" size={24} color="grey" />
